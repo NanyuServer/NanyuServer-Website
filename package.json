@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "南渝万能墙 — Vercel + Neon 全栈项目",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "start": "vercel dev"
