@@ -259,6 +259,10 @@
         <option value="捞人">捞人</option>
       </select>
     </div>
+    <div class="filter-group">
+      <div class="filter-label">内容关键词</div>
+      <input type="text" class="filter-input" id="keywordFilter" placeholder="输入关键词搜索内容" />
+    </div>
     <button class="filter-btn filter-btn-primary" onclick="applyFilter()">搜索</button>
     <button class="filter-btn filter-btn-reset" onclick="resetFilter()">重置</button>
   </div>
@@ -383,12 +387,14 @@ function applyFilter() {
   const start = document.getElementById('dateStart').value;
   const end = document.getElementById('dateEnd').value;
   const type = document.getElementById('typeFilter').value;
+  const keyword = document.getElementById('keywordFilter').value.toLowerCase().trim();
 
   filteredData = allData.filter(item => {
     const d = new Date(item.created_at);
     if (start && d < new Date(start)) return false;
     if (end && d > new Date(end + 'T23:59:59')) return false;
     if (type && item.type !== type) return false;
+    if (keyword && !item.content.toLowerCase().includes(keyword)) return false;
     return true;
   });
 
@@ -403,6 +409,7 @@ function resetFilter() {
   document.getElementById('dateStart').value = '';
   document.getElementById('dateEnd').value = '';
   document.getElementById('typeFilter').value = '';
+  document.getElementById('keywordFilter').value = '';
   filteredData = [...allData];
   sortData();
   currentPage = 1;
