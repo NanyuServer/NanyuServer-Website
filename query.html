@@ -317,11 +317,15 @@ let sortOrder = 'desc';
 // Fetch all data from Neon via the Vercel API route
 async function fetchData() {
   const res = await fetch(API_ENDPOINT);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `HTTP ${res.status}`);
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
   }
-  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || `HTTP ${res.status}`);
+  }
   // API returns { data: [...] }
   return Array.isArray(json.data) ? json.data : json;
 }
