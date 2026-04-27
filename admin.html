@@ -419,7 +419,12 @@ async function apiPost(payload) {
     headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
     body: JSON.stringify(payload)
   });
-  const json = await res.json();
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
   if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
   return json.data;
 }
@@ -429,7 +434,12 @@ async function apiDelete(id) {
     method: 'DELETE',
     headers: { 'x-admin-secret': ADMIN_SECRET }
   });
-  const json = await res.json();
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
   if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
   return json;
 }
