@@ -859,11 +859,27 @@ function doLogout() {
 
 // Check if already logged in
 function checkAuthOnLoad() {
+  // Initialize database first
+  initializeAuthSystem();
+  
   const token = localStorage.getItem('adminToken');
   if (token) {
     ADMIN_SECRET = token;
     // Verify token is still valid
     verifyToken();
+  }
+}
+
+async function initializeAuthSystem() {
+  try {
+    // Call GET /api/auth to ensure default admin is created
+    const res = await fetch(AUTH_API_ENDPOINT, { method: 'GET' });
+    if (res.ok) {
+      const data = await res.json();
+      console.log('[系统初始化] ' + data.message);
+    }
+  } catch (e) {
+    console.warn('[初始化] 系统初始化提示:', e.message);
   }
 }
 
