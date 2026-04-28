@@ -28,7 +28,7 @@
   body::before { content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
   /* Nav */
-  nav { position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 3rem 1.25rem 4px;backdrop-filter:blur(14px);background:linear-gradient(180deg,rgba(13,8,24,0.96) 0%,transparent 100%); }
+  nav { position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem 1rem 4px;backdrop-filter:blur(20px);background:linear-gradient(180deg,rgba(13,8,24,0.85) 0%,transparent 100%);border-bottom:1px solid rgba(123,85,212,0.15); }
   .logo { display:flex;align-items:center; }
   .logo img { display:block;height:3.2rem;width:auto;transform:translateX(40px); }
   .nav-links { display:flex;gap:2.2rem;list-style:none; }
@@ -56,7 +56,7 @@
 
   /* Page header */
   .page-hero {
-    padding: 9rem 2rem 4rem;
+    padding: 7rem 2rem 2.5rem;
     background: linear-gradient(180deg, var(--p2) 0%, var(--p1) 100%);
     position: relative; overflow: hidden; text-align: center;
   }
@@ -151,7 +151,10 @@
   .type-扩列 { color:var(--p6); border-color:rgba(168,127,232,0.35); background:rgba(168,127,232,0.08); }
   .type-吐槽 { color:var(--gold); border-color:rgba(232,201,122,0.35); background:rgba(232,201,122,0.08); }
   .type-二手出售 { color:#34d399; border-color:rgba(52,211,153,0.35); background:rgba(52,211,153,0.08); }
-  .type-捞人 { color:#60a5fa; border-color:rgba(96,165,250,0.35); background:rgba(96,165,250,0.08); }
+  .type-交易 { color:#34d399; border-color:rgba(52,211,153,0.35); background:rgba(52,211,153,0.08); }
+  .type-捞人、物 { color:#60a5fa; border-color:rgba(96,165,250,0.35); background:rgba(96,165,250,0.08); }
+  .type-打听资讯 { color:#fbbf24; border-color:rgba(251,191,36,0.35); background:rgba(251,191,36,0.08); }
+  .type-寻找搭子 { color:#ec4899; border-color:rgba(236,72,153,0.35); background:rgba(236,72,153,0.08); }
 
   .card-time { font-family:var(--font-ui);font-size:0.72rem;color:var(--p5);letter-spacing:0.04em;white-space:nowrap; }
   .card-content { font-family:var(--font-body);font-size:0.93rem;line-height:2;color:var(--p7);letter-spacing:0.04em; }
@@ -204,10 +207,11 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="index.html" onclick="closeMobileNav()">返回首页</a>
-  <a href="index.html#features" onclick="closeMobileNav()">平台功能</a>
-  <a href="index.html#testimonials" onclick="closeMobileNav()">学生评价</a>
+  <a href="index.html" onclick="closeMobileNav()">北关鱼的驿站</a>
   <a href="query.html" onclick="closeMobileNav()">稿件查询</a>
+  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
+  <a href="course.html" onclick="closeMobileNav()">公益课程</a>
+  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
   <button class="mobile-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'">立即进入</button>
 </div>
 
@@ -216,10 +220,11 @@
     <img src="https://www.image2url.com/r2/default/images/1777186784039-1bad113d-14f6-4391-a713-9dbdfbeb9cd8.png" alt="南渝万能墙 logo">
   </div>
   <ul class="nav-links">
-    <li><a href="index.html">返回首页</a></li>
-    <li><a href="index.html#features">平台功能</a></li>
-    <li><a href="index.html#testimonials">学生评价</a></li>
+    <li><a href="index.html">北关鱼的驿站</a></li>
     <li><a href="query.html" class="active">稿件查询</a></li>
+    <li><a href="recruit.html">招贤纳士</a></li>
+    <li><a href="course.html">公益课程</a></li>
+    <li><a href="about.html">关于我们</a></li>
   </ul>
   <button class="nav-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'"><span>立即进入</span></button>
   <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="菜单">
@@ -255,8 +260,10 @@
         <option value="挂人">挂人</option>
         <option value="扩列">扩列</option>
         <option value="吐槽">吐槽</option>
-        <option value="二手出售">二手出售</option>
-        <option value="捞人">捞人</option>
+        <option value="交易">交易</option>
+        <option value="捞人、物">捞人、物</option>
+        <option value="打听资讯">打听资讯</option>
+        <option value="寻找搭子">寻找搭子</option>
       </select>
     </div>
     <div class="filter-group">
