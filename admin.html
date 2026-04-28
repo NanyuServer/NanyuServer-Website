@@ -22,6 +22,15 @@
   html { scroll-behavior: smooth; }
   body { font-family: var(--font-ui); background: var(--p1); color: var(--p8); overflow-x: hidden; min-height: 100vh; }
   body::before { content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:0.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem 1rem 4px;
+    backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, rgba(13,8,24,0.85) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(123,85,212,0.15);
+  }
 
   /* ── Login screen ── */
   .login-screen {
@@ -172,10 +181,17 @@
   .type-挂人 { color:#f87171;border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08); }
   .type-扩列 { color:var(--p6);border-color:rgba(168,127,232,0.3);background:rgba(168,127,232,0.08); }
   .type-吐槽 { color:var(--gold);border-color:rgba(232,201,122,0.3);background:rgba(232,201,122,0.08); }
-  .type-二手出售 { color:#34d399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08); }
-  .type-捞人 { color:#60a5fa;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08); }
+  .type-交易 { color:#34d399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08); }
+  .type-捞人、物 { color:#60a5fa;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08); }
+  .type-打听资讯 { color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08); }
+  .type-寻找搭子 { color:#ec4899;border-color:rgba(236,72,153,0.3);background:rgba(236,72,153,0.08); }
+  .type-捞人、物 { color:#60a5fa;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08); }
+  .type-打听资讯 { color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08); }
+  .type-寻找搭子 { color:#ec4899;border-color:rgba(236,72,153,0.3);background:rgba(236,72,153,0.08); }
 
   .action-btn { font-size:0.72rem;padding:0.3rem 0.7rem;border-radius:5px;border:1px solid;cursor:pointer;transition:all 0.2s;background:transparent;font-family:var(--font-ui);letter-spacing:0.04em;margin-right:4px; }
+  .action-edit { color: var(--teal); border-color: rgba(93,232,208,0.35); }
+  .action-edit:hover { background: rgba(93,232,208,0.15); border-color: var(--teal); }
   .action-delete { color:var(--red);border-color:rgba(248,113,113,0.3); }
   .action-delete:hover { background:rgba(248,113,113,0.15);border-color:var(--red); }
 
@@ -245,13 +261,17 @@
     </div>
     <div class="sidebar-nav">
       <div class="sidebar-section-label">内容管理</div>
-      <button class="sidebar-link active" onclick="showTab('add')">
+      <button class="sidebar-link active" id="sidebarAddLink" onclick="showTab('add')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span>添加稿件</span>
       </button>
-      <button class="sidebar-link" onclick="showTab('list')">
+      <button class="sidebar-link" id="sidebarListLink" onclick="showTab('list')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         <span>稿件列表</span>
+      </button>
+      <button class="sidebar-link" id="sidebarRecruitLink" onclick="showTab('recruit')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
+        <span>招贤纳士管理</span>
       </button>
       <div class="sidebar-section-label">导航</div>
       <a class="sidebar-link" href="index.html">
@@ -323,13 +343,16 @@
               <option value="挂人">⚠️ 挂人</option>
               <option value="扩列">🤝 扩列</option>
               <option value="吐槽">💬 吐槽</option>
-              <option value="二手出售">🛍️ 二手出售</option>
-              <option value="捞人">🎣 捞人</option>
+              <option value="交易">🛍️ 交易</option>
+              <option value="捞人、物">🎣 捞人、物</option>
+              <option value="打听资讯">🔔 打听资讯</option>
+              <option value="寻找搭子">👫 寻找搭子</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">稿件 ID（自动生成）</label>
             <input type="text" class="form-input" id="fieldId" placeholder="提交后自动分配" disabled style="opacity:0.5" />
+            <input type="hidden" id="fieldEditId" value="" />
           </div>
           <div class="form-group full">
             <label class="form-label">稿件内容</label>
@@ -338,6 +361,7 @@
         </div>
         <div class="form-actions">
           <button class="btn-clear" onclick="clearForm()">清 空</button>
+          <button class="btn-clear" id="cancelEditBtn" onclick="cancelEdit()" style="display:none;">取消编辑</button>
           <button class="btn-submit" id="submitBtn" onclick="submitEntry()">提交至数据库</button>
         </div>
       </div>
@@ -357,8 +381,10 @@
               <option value="挂人">挂人</option>
               <option value="扩列">扩列</option>
               <option value="吐槽">吐槽</option>
-              <option value="二手出售">二手出售</option>
-              <option value="捞人">捞人</option>
+              <option value="交易">交易</option>
+              <option value="捞人、物">捞人、物</option>
+              <option value="打听资讯">打听资讯</option>
+              <option value="寻找搭子">寻找搭子</option>
             </select>
           </div>
         </div>
@@ -382,6 +408,64 @@
         </div>
       </div>
     </div>
+
+    <div id="tabRecruit" style="display:none;">
+      <div class="form-card">
+        <div class="form-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
+          招贤纳士岗位管理
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">岗位名称</label>
+            <input type="text" class="form-input" id="recruitTitle" placeholder="例如：内容运营" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">岗位标签</label>
+            <input type="text" class="form-input" id="recruitTags" placeholder="例如：招2-3人, 周末兼职" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">报名链接</label>
+            <input type="text" class="form-input" id="recruitApply" placeholder="https://..." />
+          </div>
+          <div class="form-group full">
+            <label class="form-label">岗位描述</label>
+            <textarea class="form-textarea" id="recruitDesc" placeholder="请输入岗位职责与要求…" rows="4"></textarea>
+            <input type="hidden" id="recruitEditId" value="" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-clear" onclick="clearRecruitForm()">清 空</button>
+          <button class="btn-clear" id="cancelRecruitEditBtn" onclick="cancelRecruitEdit()" style="display:none;">取消编辑</button>
+          <button class="btn-submit" id="submitRecruitBtn" onclick="submitRecruitEntry()">保存岗位</button>
+        </div>
+      </div>
+
+      <div class="table-card" style="margin-top:1.5rem;">
+        <div class="table-toolbar">
+          <div class="table-toolbar-title">岗位列表</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>岗位名称</th>
+                <th>岗位描述</th>
+                <th>标签</th>
+                <th>报名链接</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="recruitTableBody"></tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <div class="table-count" id="recruitCount">共 0 条</div>
+          <div class="table-pagination"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -394,7 +478,9 @@
 // The ADMIN_SECRET below must match the ADMIN_SECRET environment variable you set in Vercel.
 // Change this value, then set the same value in Vercel → Settings → Environment Variables.
 const API_ENDPOINT = '/api/submissions';
+const RECRUIT_API_ENDPOINT = '/api/recruitments';
 const ADMIN_SECRET = 'NyuWall!2026#xP9s'; // ← 已生成，请同时设置到 Vercel 环境变量
+let recruitData = [];
 
 // Login credentials (client-side only for UI gate; real auth is the ADMIN_SECRET header)
 const ADMIN_USER = 'admin';
@@ -444,6 +530,178 @@ async function apiDelete(id) {
   return json;
 }
 
+async function apiPatch(id, payload) {
+  const res = await fetch(`${API_ENDPOINT}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
+    body: JSON.stringify(payload)
+  });
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
+  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+  return json.data;
+}
+
+async function apiRecruitGet() {
+  const res = await fetch(RECRUIT_API_ENDPOINT);
+  if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || `HTTP ${res.status}`);
+  const json = await res.json();
+  return Array.isArray(json.data) ? json.data : [];
+}
+
+async function apiRecruitPost(payload) {
+  const res = await fetch(RECRUIT_API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
+    body: JSON.stringify(payload)
+  });
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
+  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+  return json.data;
+}
+
+async function apiRecruitDelete(id) {
+  const res = await fetch(`${RECRUIT_API_ENDPOINT}/${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-secret': ADMIN_SECRET }
+  });
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
+  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+  return json;
+}
+
+async function apiRecruitPatch(id, payload) {
+  const res = await fetch(`${RECRUIT_API_ENDPOINT}/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_SECRET },
+    body: JSON.stringify(payload)
+  });
+  let json;
+  try {
+    json = await res.json();
+  } catch (e) {
+    throw new Error(`API 返回非 JSON 响应 (HTTP ${res.status}): ${res.statusText}`);
+  }
+  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+  return json.data;
+}
+
+async function loadRecruitData() {
+  try {
+    recruitData = await apiRecruitGet();
+    renderRecruitTable();
+  } catch (e) {
+    showToast('招贤纳士数据加载失败：' + e.message, 'error');
+  }
+}
+
+function renderRecruitTable() {
+  const tbody = document.getElementById('recruitTableBody');
+  if (!recruitData.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-table">暂无招聘岗位</td></tr>`;
+    document.getElementById('recruitCount').textContent = '共 0 条';
+    return;
+  }
+  tbody.innerHTML = recruitData.map(item => `
+    <tr>
+      <td style="color:var(--p5);font-size:0.75rem">#${item.id}</td>
+      <td>${escapeHtml(item.title)}</td>
+      <td class="content-cell" title="${escapeAttr(item.description)}">${escapeHtml(item.description)}</td>
+      <td>${escapeHtml(item.tags || '—')}</td>
+      <td>${item.apply_url ? `<a href="${escapeAttr(item.apply_url)}" target="_blank" rel="noreferrer">查看报名</a>` : '—'}</td>
+      <td>
+        <button class="action-btn action-edit" onclick="enterRecruitEditMode(${item.id})">编辑</button>
+        <button class="action-btn action-delete" onclick="deleteRecruitEntry(${item.id})">删除</button>
+      </td>
+    </tr>
+  `).join('');
+  document.getElementById('recruitCount').textContent = `共 ${recruitData.length} 条`;
+}
+
+function clearRecruitForm() {
+  document.getElementById('recruitTitle').value = '';
+  document.getElementById('recruitDesc').value = '';
+  document.getElementById('recruitTags').value = '';
+  document.getElementById('recruitApply').value = '';
+  document.getElementById('recruitEditId').value = '';
+  document.getElementById('cancelRecruitEditBtn').style.display = 'none';
+  document.getElementById('submitRecruitBtn').textContent = '保存岗位';
+}
+
+async function submitRecruitEntry() {
+  const title = document.getElementById('recruitTitle').value.trim();
+  const description = document.getElementById('recruitDesc').value.trim();
+  const tags = document.getElementById('recruitTags').value.trim();
+  const apply_url = document.getElementById('recruitApply').value.trim();
+  const editId = document.getElementById('recruitEditId').value;
+
+  if (!title) { showToast('请输入岗位名称', 'error'); return; }
+  if (!description) { showToast('请输入岗位描述', 'error'); return; }
+
+  const btn = document.getElementById('submitRecruitBtn');
+  btn.disabled = true;
+  btn.textContent = '提交中…';
+
+  try {
+    if (editId) {
+      const updated = await apiRecruitPatch(editId, { title, description, tags, apply_url });
+      recruitData = recruitData.map(item => item.id === updated.id ? updated : item);
+      showToast('岗位已更新', 'success');
+      clearRecruitForm();
+    } else {
+      const created = await apiRecruitPost({ title, description, tags, apply_url });
+      recruitData.unshift(created);
+      showToast('岗位已添加', 'success');
+      clearRecruitForm();
+    }
+    renderRecruitTable();
+  } catch (e) {
+    showToast('岗位保存失败：' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = editId ? '保存岗位' : '保存岗位';
+  }
+}
+
+function enterRecruitEditMode(id) {
+  const item = recruitData.find(i => i.id === id);
+  if (!item) { showToast('未找到该岗位', 'error'); return; }
+  document.getElementById('recruitEditId').value = item.id;
+  document.getElementById('recruitTitle').value = item.title;
+  document.getElementById('recruitDesc').value = item.description;
+  document.getElementById('recruitTags').value = item.tags || '';
+  document.getElementById('recruitApply').value = item.apply_url || '';
+  document.getElementById('cancelRecruitEditBtn').style.display = 'inline-flex';
+  document.getElementById('submitRecruitBtn').textContent = '保存岗位';
+  showTab('recruit');
+}
+
+async function deleteRecruitEntry(id) {
+  if (!confirm('确认删除该岗位？此操作不可撤销。')) return;
+  try {
+    await apiRecruitDelete(id);
+    recruitData = recruitData.filter(item => item.id !== id);
+    renderRecruitTable();
+    showToast('岗位已删除', 'success');
+  } catch (e) {
+    showToast('删除失败：' + e.message, 'error');
+  }
+}
+
 // ── Login ──
 function doLogin() {
   const u = document.getElementById('loginUser').value.trim();
@@ -482,16 +740,31 @@ async function loadAllData() {
 function showTab(tab) {
   document.getElementById('tabAdd').style.display = tab === 'add' ? 'block' : 'none';
   document.getElementById('tabList').style.display = tab === 'list' ? 'block' : 'none';
+  document.getElementById('tabRecruit').style.display = tab === 'recruit' ? 'block' : 'none';
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   if (tab === 'add') {
-    document.querySelectorAll('.sidebar-link')[0].classList.add('active');
-    document.getElementById('tabTitle').textContent = '添加稿件';
-    document.getElementById('tabSub').textContent = '填写信息后提交至数据库';
-  } else {
-    document.querySelectorAll('.sidebar-link')[1].classList.add('active');
+    document.getElementById('sidebarAddLink').classList.add('active');
+    if (document.getElementById('fieldEditId').value) {
+      document.getElementById('tabTitle').textContent = '编辑稿件';
+      document.getElementById('tabSub').textContent = '修改稿件内容并保存到数据库';
+      document.getElementById('submitBtn').textContent = '保存修改';
+      document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+    } else {
+      document.getElementById('tabTitle').textContent = '添加稿件';
+      document.getElementById('tabSub').textContent = '填写信息后提交至数据库';
+      document.getElementById('submitBtn').textContent = '提交至数据库';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+  } else if (tab === 'list') {
+    document.getElementById('sidebarListLink').classList.add('active');
     document.getElementById('tabTitle').textContent = '稿件列表';
     document.getElementById('tabSub').textContent = '查看和管理所有已录入稿件';
     loadAllData();
+  } else if (tab === 'recruit') {
+    document.getElementById('sidebarRecruitLink').classList.add('active');
+    document.getElementById('tabTitle').textContent = '招贤纳士管理';
+    document.getElementById('tabSub').textContent = '同步招贤纳士岗位数据到前端页面';
+    loadRecruitData();
   }
 }
 
@@ -499,6 +772,8 @@ function showTab(tab) {
 function clearForm() {
   document.getElementById('fieldContent').value = '';
   document.getElementById('fieldType').value = '';
+  document.getElementById('fieldId').value = '';
+  document.getElementById('fieldEditId').value = '';
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('fieldTime').value = now.toISOString().slice(0, 16);
@@ -514,28 +789,55 @@ async function submitEntry() {
   if (!content) { showToast('请输入稿件内容', 'error'); return; }
   if (content.length < 5) { showToast('稿件内容过短，至少5个字符', 'error'); return; }
 
+  const editId = document.getElementById('fieldEditId').value;
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = '提交中…';
 
   try {
-    const newRecord = await apiPost({
-      created_at: new Date(time).toISOString(),
-      content,
-      type
-    });
-    // Insert into local cache
-    DB.unshift(newRecord);
-    showToast('✓ 稿件已成功写入数据库', 'success');
-    clearForm();
-    updateStats();
+    if (editId) {
+      const updated = await apiPatch(editId, { content, type });
+      DB = DB.map(r => r.id === updated.id ? updated : r);
+      showToast('✓ 稿件已成功更新', 'success');
+      clearForm();
+      showTab('add');
+    } else {
+      const newRecord = await apiPost({
+        created_at: new Date(time).toISOString(),
+        content,
+        type
+      });
+      DB.unshift(newRecord);
+      showToast('✓ 稿件已成功写入数据库', 'success');
+      clearForm();
+      updateStats();
+    }
     filterTable();
   } catch (e) {
-    showToast('提交失败：' + e.message, 'error');
+    showToast((editId ? '更新失败：' : '提交失败：') + e.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '提交至数据库';
+    btn.textContent = editId ? '保存修改' : '提交至数据库';
   }
+}
+
+function enterEditMode(id) {
+  const record = DB.find(r => r.id === id);
+  if (!record) {
+    showToast('未找到该稿件', 'error');
+    return;
+  }
+  document.getElementById('fieldEditId').value = record.id;
+  document.getElementById('fieldId').value = `#${record.id}`;
+  document.getElementById('fieldTime').value = new Date(record.created_at).toISOString().slice(0, 16);
+  document.getElementById('fieldType').value = record.type;
+  document.getElementById('fieldContent').value = record.content;
+  showTab('add');
+}
+
+function cancelEdit() {
+  clearForm();
+  showTab('add');
 }
 
 // ── Table ──
@@ -569,7 +871,10 @@ function renderTable() {
       <td style="white-space:nowrap;color:var(--p6);font-size:0.78rem">${formatDT(r.created_at)}</td>
       <td><span class="type-badge type-${r.type}">${r.type}</span></td>
       <td class="content-cell" title="${escapeAttr(r.content)}">${escapeHtml(r.content)}</td>
-      <td><button class="action-btn action-delete" onclick="deleteEntry(${r.id})">删除</button></td>
+      <td>
+        <button class="action-btn action-edit" onclick="enterEditMode(${r.id})">编辑</button>
+        <button class="action-btn action-delete" onclick="deleteEntry(${r.id})">删除</button>
+      </td>
     </tr>
   `).join('');
 
