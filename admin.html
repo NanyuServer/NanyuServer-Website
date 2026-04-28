@@ -4,8 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>管理员后台 — 南渝万能墙</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
 <style>
+  @font-face {
+    font-family: 'OPPO Sans';
+    src: url('OPPO Sans 4.0.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -14,9 +20,9 @@
     --gold: #e8c97a; --gold2: #f5dfa0; --rose: #e86fa3; --teal: #5de8d0;
     --green: #34d399; --red: #f87171;
     --easing: cubic-bezier(0.16, 1, 0.3, 1);
-    --font-title: 'Microsoft Sans Serif','Microsoft YaHei UI','Segoe UI','Noto Sans SC',sans-serif;
-    --font-body: 'Noto Serif SC','STSong','SimSun',Georgia,serif;
-    --font-ui: 'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+    --font-title: 'OPPO Sans', sans-serif;
+    --font-body: 'OPPO Sans', sans-serif;
+    --font-ui: 'OPPO Sans', sans-serif;
   }
 
   html { scroll-behavior: smooth; }
@@ -273,6 +279,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
         <span>招贤纳士管理</span>
       </button>
+      <button class="sidebar-link" id="sidebarAccountLink" onclick="showTab('account')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>账户管理</span>
+      </button>
       <div class="sidebar-section-label">导航</div>
       <a class="sidebar-link" href="index.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -466,6 +476,46 @@
         </div>
       </div>
     </div>
+
+    <div id="tabAccount" style="display:none;">
+      <div class="form-card">
+        <div class="form-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          账户设置
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">当前用户</label>
+            <input type="text" class="form-input" id="currentUsername" disabled />
+          </div>
+          <div class="form-group">
+            <label class="form-label">旧密码</label>
+            <input type="password" class="form-input" id="accountOldPass" placeholder="请输入当前密码" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">新密码</label>
+            <input type="password" class="form-input" id="accountNewPass" placeholder="至少6个字符" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">确认新密码</label>
+            <input type="password" class="form-input" id="accountNewPassConfirm" placeholder="确认新密码" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-clear" onclick="clearAccountForm()">重 置</button>
+          <button class="btn-submit" onclick="submitChangePassword()">修改密码</button>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-title">安全信息</div>
+        <div class="info-text">
+          • 密码最少6个字符<br/>
+          • 修改密码后需要重新登录<br/>
+          • 请定期修改密码以保护账户安全<br/>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -475,16 +525,11 @@
 <script>
 // ── API Config ──
 // All data operations go through Vercel Serverless Functions → Neon PostgreSQL.
-// The ADMIN_SECRET below must match the ADMIN_SECRET environment variable you set in Vercel.
-// Change this value, then set the same value in Vercel → Settings → Environment Variables.
 const API_ENDPOINT = '/api/submissions';
 const RECRUIT_API_ENDPOINT = '/api/recruitments';
-const ADMIN_SECRET = 'NyuWall!2026#xP9s'; // ← 已生成，请同时设置到 Vercel 环境变量
+const AUTH_API_ENDPOINT = '/api/auth';
+let ADMIN_SECRET = localStorage.getItem('adminToken') || ''; // Stored in localStorage after login
 let recruitData = [];
-
-// Login credentials (client-side only for UI gate; real auth is the ADMIN_SECRET header)
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'nywll2026'; // ← 可修改本地登录密码
 
 let DB = [];          // local cache of all records from Neon
 let tableFiltered = [];
@@ -702,28 +747,151 @@ async function deleteRecruitEntry(id) {
   }
 }
 
+// ── Account Management ──
+function loadAccountInfo() {
+  const username = localStorage.getItem('adminUsername') || '游客';
+  document.getElementById('currentUsername').value = username;
+}
+
+function clearAccountForm() {
+  document.getElementById('accountOldPass').value = '';
+  document.getElementById('accountNewPass').value = '';
+  document.getElementById('accountNewPassConfirm').value = '';
+}
+
+async function submitChangePassword() {
+  const oldPass = document.getElementById('accountOldPass').value.trim();
+  const newPass = document.getElementById('accountNewPass').value.trim();
+  const confirmPass = document.getElementById('accountNewPassConfirm').value.trim();
+  const username = localStorage.getItem('adminUsername');
+
+  if (!oldPass) { showToast('请输入旧密码', 'error'); return; }
+  if (!newPass) { showToast('请输入新密码', 'error'); return; }
+  if (newPass.length < 6) { showToast('新密码至少6个字符', 'error'); return; }
+  if (newPass !== confirmPass) { showToast('两次输入的密码不一致', 'error'); return; }
+
+  const btn = document.querySelector('[onclick="submitChangePassword()"]');
+  btn.disabled = true;
+  btn.textContent = '修改中…';
+
+  try {
+    const res = await fetch(AUTH_API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-action': 'change-password' },
+      body: JSON.stringify({ username, old_password: oldPass, new_password: newPass })
+    });
+
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error || '修改失败');
+    }
+
+    showToast('✓ 密码已成功修改，请重新登录', 'success');
+    clearAccountForm();
+    setTimeout(() => doLogout(), 2000);
+  } catch (e) {
+    showToast('修改失败：' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '修改密码';
+  }
+}
+
 // ── Login ──
-function doLogin() {
+async function doLogin() {
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value.trim();
-  if (u === ADMIN_USER && p === ADMIN_PASS) {
+  const btn = document.querySelector('.login-btn');
+  const errEl = document.getElementById('loginErr');
+  
+  if (!u || !p) {
+    errEl.textContent = '请输入用户名和密码';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '验证中…';
+
+  try {
+    const res = await fetch(AUTH_API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-action': 'login' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json.error || '认证失败');
+    }
+
+    // Store token in localStorage
+    ADMIN_SECRET = json.token;
+    localStorage.setItem('adminToken', json.token);
+    localStorage.setItem('adminUsername', json.username);
+
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminScreen').style.display = 'block';
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('fieldTime').value = now.toISOString().slice(0, 16);
+    errEl.style.display = 'none';
     loadAllData();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '进入后台';
   }
 }
 
 function doLogout() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUsername');
+  ADMIN_SECRET = '';
   document.getElementById('adminScreen').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginPass').value = '';
   document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginUser').value = '';
 }
+
+// Check if already logged in
+function checkAuthOnLoad() {
+  const token = localStorage.getItem('adminToken');
+  if (token) {
+    ADMIN_SECRET = token;
+    // Verify token is still valid
+    verifyToken();
+  }
+}
+
+async function verifyToken() {
+  try {
+    const res = await fetch(AUTH_API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-action': 'verify', 'x-admin-secret': ADMIN_SECRET }
+    });
+    if (res.ok) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').style.display = 'block';
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('fieldTime').value = now.toISOString().slice(0, 16);
+      loadAllData();
+    } else {
+      localStorage.removeItem('adminToken');
+      ADMIN_SECRET = '';
+    }
+  } catch (e) {
+    localStorage.removeItem('adminToken');
+    ADMIN_SECRET = '';
+  }
+}
+
+// Initialize auth on page load
+window.addEventListener('DOMContentLoaded', checkAuthOnLoad);
 
 // ── Load data from Neon ──
 async function loadAllData() {
@@ -741,6 +909,7 @@ function showTab(tab) {
   document.getElementById('tabAdd').style.display = tab === 'add' ? 'block' : 'none';
   document.getElementById('tabList').style.display = tab === 'list' ? 'block' : 'none';
   document.getElementById('tabRecruit').style.display = tab === 'recruit' ? 'block' : 'none';
+  document.getElementById('tabAccount').style.display = tab === 'account' ? 'block' : 'none';
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   if (tab === 'add') {
     document.getElementById('sidebarAddLink').classList.add('active');
@@ -765,6 +934,11 @@ function showTab(tab) {
     document.getElementById('tabTitle').textContent = '招贤纳士管理';
     document.getElementById('tabSub').textContent = '同步招贤纳士岗位数据到前端页面';
     loadRecruitData();
+  } else if (tab === 'account') {
+    document.getElementById('sidebarAccountLink').classList.add('active');
+    document.getElementById('tabTitle').textContent = '账户设置';
+    document.getElementById('tabSub').textContent = '修改密码和管理账户';
+    loadAccountInfo();
   }
 }
 
@@ -838,6 +1012,11 @@ function enterEditMode(id) {
 function cancelEdit() {
   clearForm();
   showTab('add');
+}
+
+function cancelRecruitEdit() {
+  clearRecruitForm();
+  showTab('recruit');
 }
 
 // ── Table ──

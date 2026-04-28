@@ -4,8 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>招贤纳士 — 南渝万能墙</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
 <style>
+  @font-face {
+    font-family: 'OPPO Sans';
+    src: url('OPPO Sans 4.0.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -13,9 +19,9 @@
     --p5: #7b55d4; --p6: #a87fe8; --p7: #d4b8f5; --p8: #f0e6ff;
     --gold: #e8c97a; --gold2: #f5dfa0; --rose: #e86fa3; --teal: #5de8d0;
     --easing: cubic-bezier(0.16, 1, 0.3, 1);
-    --font-title: 'Microsoft Sans Serif', 'Microsoft YaHei UI', 'Segoe UI', 'Noto Sans SC', sans-serif;
-    --font-body: 'Noto Serif SC', 'STSong', 'SimSun', 'FangSong', Georgia, serif;
-    --font-ui: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-title: 'OPPO Sans', sans-serif;
+    --font-body: 'OPPO Sans', sans-serif;
+    --font-ui: 'OPPO Sans', sans-serif;
   }
 
   html { scroll-behavior: smooth; }
@@ -150,6 +156,9 @@
   .position-title { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem; }
   .position-desc { font-family: var(--font-body); font-size: 0.85rem; color: var(--p6); line-height: 1.6; margin-bottom: 1rem; }
   .position-tag { display: inline-block; padding: 0.3rem 0.7rem; background: rgba(123,85,212,0.2); border-radius: 4px; font-size: 0.7rem; color: var(--p5); margin-right: 0.5rem; margin-bottom: 0.5rem; }
+
+  .position-link { display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.2rem; background: linear-gradient(135deg, var(--p4), var(--rose)); color: white; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; transition: all 0.3s var(--easing); font-family: var(--font-ui); }
+  .position-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(75,47,163,0.4); }
 
   footer { padding: 2.5rem 2rem; text-align: center; border-top: 1px solid rgba(75,47,163,0.2); }
   .footer-copy { font-family: var(--font-body); font-size: 0.73rem; color: var(--p5); letter-spacing: 0.06em; }
