@@ -1,9 +1,47 @@
 const { neon } = require('@neondatabase/serverless');
 const crypto = require('crypto');
 
+// Initialization function
+async function ensureDefaultAdmin(sql) {
+  try {
+    // Create table if not exists
+    await sql(`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id serial PRIMARY KEY,
+        username varchar(50) UNIQUE NOT NULL,
+        password_hash varchar(255) NOT NULL,
+        secret_key varchar(100) UNIQUE NOT NULL,
+        created_at timestamptz DEFAULT NOW(),
+        last_login timestamptz DEFAULT NULL
+      )
+    `);
+
+    // Check if default admin exists
+    const existing = await sql(`SELECT COUNT(*) as cnt FROM admin_users WHERE username = $1`, ['admin']);
+    const count = existing[0]?.cnt || 0;
+    
+    if (count === 0) {
+      const defaultPass = 'nywll2026';
+      const passwordHash = crypto.createHash('sha256').update(defaultPass).digest('hex');
+      const secretKey = crypto.randomBytes(32).toString('hex');
+      
+      await sql(
+        `INSERT INTO admin_users (username, password_hash, secret_key) VALUES ($1, $2, $3)`,
+        ['admin', passwordHash, secretKey]
+      );
+      console.log('[AUTH] ✓ Default admin user created (admin / nywll2026)');
+      return { initialized: true, message: '默认管理员已创建' };
+    }
+    return { initialized: true, message: '管理员账户已存在' };
+  } catch (err) {
+    console.error('[AUTH] Error initializing admin:', err);
+    throw err;
+  }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -12,33 +50,24 @@ module.exports = async function handler(req, res) {
 
   const sql = neon(process.env.DATABASE_URL);
   
-  // Create admin_users table if not exists
-  await sql(`
-    CREATE TABLE IF NOT EXISTS admin_users (
-      id serial PRIMARY KEY,
-      username varchar(50) UNIQUE NOT NULL,
-      password_hash varchar(255) NOT NULL,
-      secret_key varchar(100) UNIQUE NOT NULL,
-      created_at timestamptz DEFAULT NOW(),
-      last_login timestamptz DEFAULT NULL
-    )
-  `);
-
-  // Initialize default admin if not exists
+  // Ensure default admin on every request
   try {
-    const existing = await sql(`SELECT COUNT(*) as cnt FROM admin_users WHERE username = $1`, ['admin']);
-    if (existing[0].cnt === 0) {
-      const defaultPass = 'nywll2026';
-      const passwordHash = crypto.createHash('sha256').update(defaultPass).digest('hex');
-      const secretKey = crypto.randomBytes(32).toString('hex');
-      await sql(
-        `INSERT INTO admin_users (username, password_hash, secret_key) VALUES ($1, $2, $3)`,
-        ['admin', passwordHash, secretKey]
-      );
-      console.log('[AUTH] Default admin user created');
-    }
+    await ensureDefaultAdmin(sql);
   } catch (err) {
-    console.error('[AUTH] Failed to initialize admin user:', err);
+    console.error('[AUTH] Initialization error:', err);
+  }
+
+  if (req.method === 'GET') {
+    try {
+      const initResult = await ensureDefaultAdmin(sql);
+      return res.status(200).json({
+        status: 'ready',
+        message: initResult.message,
+        hint: '默认账号: admin | 密码: nywll2026'
+      });
+    } catch (err) {
+      return res.status(500).json({ error: '初始化失败', detail: err.message });
+    }
   }
 
   if (req.method === 'POST') {
