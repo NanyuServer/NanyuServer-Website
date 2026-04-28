@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>招贤纳士 — 南渝万能墙</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --p1: #0d0818; --p2: #1a0e3a; --p3: #2d1b6b; --p4: #4c2fa3;
+    --p5: #7b55d4; --p6: #a87fe8; --p7: #d4b8f5; --p8: #f0e6ff;
+    --gold: #e8c97a; --gold2: #f5dfa0; --rose: #e86fa3; --teal: #5de8d0;
+    --easing: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-title: 'Microsoft Sans Serif', 'Microsoft YaHei UI', 'Segoe UI', 'Noto Sans SC', sans-serif;
+    --font-body: 'Noto Serif SC', 'STSong', 'SimSun', 'FangSong', Georgia, serif;
+    --font-ui: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--p1);
+    color: var(--p8);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .cursor {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    width: 12px; height: 12px; background: var(--p6); border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998;
+    width: 36px; height: 36px; border: 1px solid rgba(168,127,232,0.5);
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: transform 0.25s var(--easing), width 0.4s, height 0.4s, border-color 0.3s;
+  }
+  body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 20px; height: 20px; background: var(--gold); }
+  body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 56px; height: 56px; border-color: var(--gold); }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem 1rem 4px;
+    backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, rgba(13,8,24,0.85) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(123,85,212,0.15);
+    animation: fadeDown 1s var(--easing) both;
+  }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
+
+  .logo { display: flex; align-items: center; margin-left: 0; }
+  .logo img { display: block; height: 3.2rem; width: auto; transform: translateX(40px); }
+
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--font-ui); color: var(--p7); text-decoration: none;
+    font-size: 0.82rem; letter-spacing: 0.06em; position: relative; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px;
+    background: var(--gold); transform: scaleX(0); transform-origin: right;
+    transition: transform 0.4s var(--easing);
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  .nav-cta {
+    font-family: var(--font-ui); padding: 0.55rem 1.4rem;
+    border: 1px solid var(--p5); background: transparent; color: var(--p7);
+    font-size: 0.8rem; letter-spacing: 0.06em; cursor: none; border-radius: 2px;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .nav-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--p4), var(--rose));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .nav-cta:hover::before { opacity: 1; }
+  .nav-cta span { position: relative; z-index: 1; }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 600; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--p7); border-radius: 2px; transition: all 0.3s var(--easing); }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-nav { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 490; background: rgba(13,8,24,0.97); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; opacity: 0; transition: opacity 0.35s var(--easing); }
+  .mobile-nav.open { display: flex; opacity: 1; }
+  .mobile-nav a { font-family: var(--font-ui); font-size: 1.4rem; color: var(--p7); text-decoration: none; letter-spacing: 0.08em; transition: color 0.3s; padding: 0.5rem 2rem; border-bottom: 1px solid rgba(123,85,212,0.2); width: 100%; text-align: center; }
+  .mobile-nav a:hover { color: var(--gold); }
+
+  .page-hero {
+    padding: 7rem 2rem 2.5rem;
+    background: linear-gradient(180deg, var(--p2) 0%, var(--p1) 100%);
+    position: relative; overflow: hidden; text-align: center;
+  }
+  .page-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(75,47,163,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(75,47,163,0.07) 1px,transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);
+  }
+  .page-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; top: -80px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(circle,rgba(75,47,163,0.5) 0%,rgba(232,111,163,0.2) 50%,transparent 70%); }
+  .page-hero-content { position: relative; z-index: 2; }
+  .page-label { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-ui); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 1rem; }
+  .page-label::before, .page-label::after { content: ''; display: block; width: 20px; height: 1px; background: var(--gold); }
+  .page-title { font-family: var(--font-title); font-size: clamp(2rem,5vw,3.5rem); font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(135deg,var(--gold),var(--p7),var(--p6)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.8rem; }
+  .page-sub { font-family: var(--font-body); color: var(--p6); font-size: 0.95rem; letter-spacing: 0.06em; }
+
+  .content-section {
+    max-width: 1100px; margin: 0 auto; padding: 3rem 2rem;
+  }
+
+  .info-card {
+    background: linear-gradient(135deg, rgba(29,14,58,0.9), rgba(45,27,107,0.5));
+    border: 1px solid rgba(123,85,212,0.25); border-radius: 12px;
+    padding: 2rem; margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .info-title { font-family: var(--font-title); font-size: 1.2rem; font-weight: 700; color: var(--gold); margin-bottom: 1rem; }
+  .info-text { font-family: var(--font-body); font-size: 0.95rem; line-height: 1.8; color: var(--p7); }
+
+  .positions-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;
+  }
+
+  .position-card {
+    background: linear-gradient(135deg, rgba(75,47,163,0.2), rgba(232,111,163,0.1));
+    border: 1px solid rgba(123,85,212,0.25); border-radius: 10px;
+    padding: 1.5rem; transition: all 0.3s var(--easing);
+  }
+  .position-card:hover {
+    background: linear-gradient(135deg, rgba(75,47,163,0.3), rgba(232,111,163,0.15));
+    border-color: var(--gold); transform: translateY(-4px);
+  }
+
+  .position-title { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem; }
+  .position-desc { font-family: var(--font-body); font-size: 0.85rem; color: var(--p6); line-height: 1.6; margin-bottom: 1rem; }
+  .position-tag { display: inline-block; padding: 0.3rem 0.7rem; background: rgba(123,85,212,0.2); border-radius: 4px; font-size: 0.7rem; color: var(--p5); margin-right: 0.5rem; margin-bottom: 0.5rem; }
+
+  footer { padding: 2.5rem 2rem; text-align: center; border-top: 1px solid rgba(75,47,163,0.2); }
+  .footer-copy { font-family: var(--font-body); font-size: 0.73rem; color: var(--p5); letter-spacing: 0.06em; }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; background: rgba(13,8,24,0.96); }
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+    .logo img { transform: translateX(0); }
+    .page-hero { padding: 7rem 1.25rem 3rem; }
+    .positions-grid { grid-template-columns: 1fr; }
+    .content-section { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html" onclick="closeMobileNav()">返回首页</a>
+  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
+  <a href="course.html" onclick="closeMobileNav()">公益课程</a>
+  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
+  <a href="query.html" onclick="closeMobileNav()">稿件查询</a>
+  <button class="mobile-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'" style="padding:0.9rem 2.8rem;background:linear-gradient(135deg,var(--p4),var(--rose));color:white;border:none;border-radius:4px;font-family:var(--font-ui);font-size:1rem;letter-spacing:0.08em;">立即进入</button>
+</div>
+
+<nav>
+  <div class="logo">
+    <img src="https://www.image2url.com/r2/default/images/1777186784039-1bad113d-14f6-4391-a713-9dbdfbeb9cd8.png" alt="南渝万能墙 logo">
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">北关鱼的驿站</a></li>
+    <li><a href="query.html">稿件查询</a></li>
+    <li><a href="recruit.html" class="active">招贤纳士</a></li>
+    <li><a href="course.html">公益课程</a></li>
+    <li><a href="about.html">关于我们</a></li>
+  </ul>
+  <button class="nav-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'"><span>立即进入</span></button>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page-hero">
+  <div class="page-orb"></div>
+  <div class="page-hero-content">
+    <div class="page-label">加入我们</div>
+    <h1 class="page-title">招贤纳士</h1>
+    <p class="page-sub">诚邀优秀的学生加入运营团队，共同为校园服务</p>
+  </div>
+</div>
+
+<div class="content-section">
+  <div class="info-card">
+    <div class="info-title">📋 关于本岗位</div>
+    <div class="info-text">南渝万能墙是一个致力于为学生服务的校园平台，我们诚邀热心、有想法、有执行力的同学加入我们的运营团队。通过参与平台的日常运营，你将获得宝贵的团队协作、项目管理和沟通能力。</div>
+  </div>
+
+  <div style="margin-bottom: 2rem;">
+    <h2 style="font-family: var(--font-title); font-size: 1.3rem; color: var(--gold); margin-bottom: 1.5rem;">🎯 招聘岗位</h2>
+    <div class="positions-grid" id="positionsTable">
+      <!-- 数据将从后端加载或使用演示数据 -->
+      <div class="position-card">
+        <div class="position-title">内容运营</div>
+        <div class="position-desc">负责平台内容审核、分类和发布，与学生进行沟通反馈。</div>
+        <span class="position-tag">招2-3人</span>
+        <span class="position-tag">周末兼职</span>
+      </div>
+      <div class="position-card">
+        <div class="position-title">技术维护</div>
+        <div class="position-desc">协助平台日常维护，反馈和记录用户问题，参与功能测试。</div>
+        <span class="position-tag">招1-2人</span>
+        <span class="position-tag">技术生优先</span>
+      </div>
+      <div class="position-card">
+        <div class="position-title">宣传推广</div>
+        <div class="position-desc">制作宣传物料，策划推广活动，提升平台知名度。</div>
+        <span class="position-tag">招2人</span>
+        <span class="position-tag">创意想法</span>
+      </div>
+      <div class="position-card">
+        <div class="position-title">学生代表</div>
+        <div class="position-desc">收集学生意见反馈，参与平台产品优化讨论。</div>
+        <span class="position-tag">招3-5人</span>
+        <span class="position-tag">跨年级招募</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">✨ 我们提供</div>
+    <div class="info-text">
+      • 一个充满想法和朝气的团队环境<br/>
+      • 实践锻炼和能力提升的机会<br/>
+      • 校园内的认可与支持<br/>
+      • 定期的培训和经验分享<br/>
+      • 完整的项目记录和证明
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="info-title">📞 如何报名</div>
+    <div class="info-text">
+      感兴趣的同学可以通过以下方式报名：<br/><br/>
+      1. 点击页面右上角"立即进入"加入我们的QQ群<br/>
+      2. 填写报名表并提交基本信息<br/>
+      3. 我们会尽快与你联系进行沟通<br/><br/>
+      欢迎所有感兴趣的同学加入！
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">© 2026 南渝万能墙运营队 · 保留所有权利</div>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function animCursor(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animCursor);})();
+
+function toggleMobileNav(){const n=document.getElementById('mobileNav'),b=document.getElementById('hamburger');n.classList.toggle('open');b.classList.toggle('open');}
+function closeMobileNav(){document.getElementById('mobileNav').classList.remove('open');document.getElementById('hamburger').classList.remove('open');}
+
+async function loadRecruitPositions(){
+  const container = document.getElementById('positionsTable');
+  try {
+    const res = await fetch('/api/recruitments');
+    if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || `HTTP ${res.status}`);
+    const json = await res.json();
+    if (!Array.isArray(json.data) || !json.data.length) return;
+    container.innerHTML = json.data.map(item => `
+      <div class="position-card">
+        <div class="position-title">${escapeHtml(item.title)}</div>
+        <div class="position-desc">${escapeHtml(item.description)}</div>
+        ${item.tags ? item.tags.split(',').map(tag => `<span class="position-tag">${escapeHtml(tag.trim())}</span>`).join('') : ''}
+        ${item.apply_url ? `<a class="position-link" href="${escapeAttr(item.apply_url)}" target="_blank" rel="noreferrer">立即报名</a>` : ''}
+      </div>
+    `).join('');
+  } catch (err) {
+    console.warn('招贤纳士数据加载失败：', err);
+  }
+}
+
+function escapeHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escapeAttr(str) { return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+loadRecruitPositions();
+</script>
+</body>
+</html>
