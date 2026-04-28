@@ -17,6 +17,7 @@ module.exports = async function handler(req, res) {
 
   // Connect to Neon using the connection string from environment variable
   const sql = neon(process.env.DATABASE_URL);
+  const VALID_TYPES = ['寻物启事', '表白', '挂人', '扩列', '吐槽', '交易', '捞人、物', '打听资讯', '寻找搭子'];
 
   // ── GET: fetch all submissions with optional filters ──
   if (req.method === 'GET') {
@@ -76,7 +77,6 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: '缺少必填字段：created_at、content、type' });
     }
 
-    const VALID_TYPES = ['寻物启事', '表白', '挂人', '扩列', '吐槽', '二手出售', '捞人'];
     if (!VALID_TYPES.includes(type)) {
       return res.status(400).json({ error: `无效的投稿类型：${type}` });
     }
