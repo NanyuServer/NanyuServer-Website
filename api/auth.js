@@ -17,8 +17,9 @@ async function ensureDefaultAdmin(sql) {
     `);
 
         const existing = await sql(`SELECT COUNT(*) as cnt FROM admin_users WHERE username = $1`, ['admin']);
-    const count = existing[0]?.cnt || 0;
-    console.log(`[AUTH] Admin user count: ${count}`);
+    const rawCount = existing[0]?.cnt || 0;
+    const count = Number(rawCount);
+    console.log(`[AUTH] Admin user count raw: ${rawCount}, parsed: ${count}`);
     
     if (count === 0) {
       const defaultPass = 'nywll2026';
