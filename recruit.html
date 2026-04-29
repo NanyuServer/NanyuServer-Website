@@ -151,6 +151,13 @@
   .position-card:hover {
     background: linear-gradient(135deg, rgba(75,47,163,0.3), rgba(232,111,163,0.15));
     border-color: var(--gold); transform: translateY(-4px);
+    cursor: pointer;
+  }
+
+  .position-card.selected {
+    border-color: #a0f0c0;
+    box-shadow: 0 0 0 2px rgba(160,240,192,0.18);
+    background: linear-gradient(135deg, rgba(75,47,163,0.35), rgba(232,111,163,0.18));
   }
 
   .position-title { font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem; }
@@ -159,6 +166,97 @@
 
   .position-link { display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.2rem; background: linear-gradient(135deg, var(--p4), var(--rose)); color: white; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; transition: all 0.3s var(--easing); font-family: var(--font-ui); }
   .position-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(75,47,163,0.4); }
+
+  .form-card {
+    background: linear-gradient(135deg, rgba(29,14,58,0.92), rgba(45,27,107,0.65));
+    border: 1px solid rgba(123,85,212,0.25);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+    margin-bottom: 2rem;
+  }
+
+  .form-card-title {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 0.6rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label {
+    color: var(--p6);
+    font-size: 0.9rem;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    border: 1px solid rgba(123,85,212,0.35);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    color: var(--p8);
+    font: inherit;
+    padding: 0.95rem 1rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.9rem;
+    margin-top: 1.2rem;
+  }
+
+  .btn-submit {
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, var(--p4), var(--rose));
+    border: none;
+    border-radius: 999px;
+    color: white;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(232,111,163,0.25); }
+
+  .form-note {
+    margin-top: 0.85rem;
+    color: var(--p5);
+    font-size: 0.9rem;
+  }
+
+  .empty-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    padding: 1.5rem;
+    color: var(--p6);
+    border: 1px dashed rgba(123,85,212,0.4);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+  }
 
   footer { padding: 2.5rem 2rem; text-align: center; border-top: 1px solid rgba(75,47,163,0.2); }
   .footer-copy { font-family: var(--font-body); font-size: 0.73rem; color: var(--p5); letter-spacing: 0.06em; }
@@ -172,6 +270,7 @@
     .logo img { transform: translateX(0); }
     .page-hero { padding: 7rem 1.25rem 3rem; }
     .positions-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
     .content-section { padding: 2rem 1.25rem; }
   }
 </style>
@@ -195,7 +294,7 @@
     <img src="https://www.image2url.com/r2/default/images/1777186784039-1bad113d-14f6-4391-a713-9dbdfbeb9cd8.png" alt="南渝万能墙 logo">
   </div>
   <ul class="nav-links">
-    <li><a href="index.html">北关鱼的驿站</a></li>
+    <li><a href="index.html">返回主页</a></li>
     <li><a href="query.html">稿件查询</a></li>
     <li><a href="recruit.html" class="active">招贤纳士</a></li>
     <li><a href="course.html">公益课程</a></li>
@@ -225,54 +324,36 @@
   <div style="margin-bottom: 2rem;">
     <h2 style="font-family: var(--font-title); font-size: 1.3rem; color: var(--gold); margin-bottom: 1.5rem;">🎯 招聘岗位</h2>
     <div class="positions-grid" id="positionsTable">
-      <!-- 数据将从后端加载或使用演示数据 -->
-      <div class="position-card">
-        <div class="position-title">内容运营</div>
-        <div class="position-desc">负责平台内容审核、分类和发布，与学生进行沟通反馈。</div>
-        <span class="position-tag">招2-3人</span>
-        <span class="position-tag">周末兼职</span>
-      </div>
-      <div class="position-card">
-        <div class="position-title">技术维护</div>
-        <div class="position-desc">协助平台日常维护，反馈和记录用户问题，参与功能测试。</div>
-        <span class="position-tag">招1-2人</span>
-        <span class="position-tag">技术生优先</span>
-      </div>
-      <div class="position-card">
-        <div class="position-title">宣传推广</div>
-        <div class="position-desc">制作宣传物料，策划推广活动，提升平台知名度。</div>
-        <span class="position-tag">招2人</span>
-        <span class="position-tag">创意想法</span>
-      </div>
-      <div class="position-card">
-        <div class="position-title">学生代表</div>
-        <div class="position-desc">收集学生意见反馈，参与平台产品优化讨论。</div>
-        <span class="position-tag">招3-5人</span>
-        <span class="position-tag">跨年级招募</span>
-      </div>
+      <div class="empty-card">招聘岗位加载中，请稍候。</div>
     </div>
   </div>
 
-  <div class="info-card">
-    <div class="info-title">✨ 我们提供</div>
-    <div class="info-text">
-      • 一个充满想法和朝气的团队环境<br/>
-      • 实践锻炼和能力提升的机会<br/>
-      • 校园内的认可与支持<br/>
-      • 定期的培训和经验分享<br/>
-      • 完整的项目记录和证明
+  <div class="form-card">
+    <div class="form-card-title">📝 岗位报名</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="applicantName">姓名</label>
+        <input type="text" class="form-input" id="applicantName" placeholder="请输入姓名" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="applicantPosition">意向岗位</label>
+        <select class="form-select" id="applicantPosition">
+          <option value="">请选择意向岗位</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="applicantQQ">联系方式（QQ）</label>
+        <input type="text" class="form-input" id="applicantQQ" placeholder="请输入QQ号" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label" for="applicantNote">备注（选填）</label>
+        <textarea class="form-textarea" id="applicantNote" placeholder="如有特殊时间、技能或期望可以填写" rows="4"></textarea>
+      </div>
     </div>
-  </div>
-
-  <div class="info-card">
-    <div class="info-title">📞 如何报名</div>
-    <div class="info-text">
-      感兴趣的同学可以通过以下方式报名：<br/><br/>
-      1. 点击页面右上角"立即进入"加入我们的QQ群<br/>
-      2. 填写报名表并提交基本信息<br/>
-      3. 我们会尽快与你联系进行沟通<br/><br/>
-      欢迎所有感兴趣的同学加入！
+    <div class="form-actions">
+      <button class="btn-submit" id="recruitSubmitBtn" onclick="submitRecruitApplication()">提交报名</button>
     </div>
+    <div class="form-note" id="recruitFormNote">我们会尽快联系你，请保证联系方式正确。</div>
   </div>
 </div>
 
@@ -290,23 +371,116 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
 function toggleMobileNav(){const n=document.getElementById('mobileNav'),b=document.getElementById('hamburger');n.classList.toggle('open');b.classList.toggle('open');}
 function closeMobileNav(){document.getElementById('mobileNav').classList.remove('open');document.getElementById('hamburger').classList.remove('open');}
 
+const RECRUIT_API_ENDPOINT = '/api/recruitments';
+const RECRUIT_APPLICANT_API_ENDPOINT = '/api/recruit-applicants';
+let recruitPositions = [];
+let recruitSelectedId = null;
+
+function setRecruitSelected(positionId) {
+  recruitSelectedId = positionId;
+  const select = document.getElementById('applicantPosition');
+  if (select) select.value = positionId || '';
+  document.querySelectorAll('.position-card').forEach(card => {
+    card.classList.toggle('selected', String(card.dataset.positionId) === String(positionId));
+  });
+  if (positionId) {
+    const position = recruitPositions.find(item => String(item.id) === String(positionId));
+    const noteEl = document.getElementById('recruitFormNote');
+    if (position && noteEl) {
+      noteEl.textContent = `已选择岗位：${position.title}，请完成报名信息后提交。 `;
+      noteEl.style.color = '#a0f0c0';
+    }
+  }
+}
+
 async function loadRecruitPositions(){
   const container = document.getElementById('positionsTable');
+  const select = document.getElementById('applicantPosition');
+  container.innerHTML = '<div class="empty-card">招聘岗位加载中...</div>';
+  if (select) select.innerHTML = '<option value="">加载中，请稍候…</option>';
+
   try {
-    const res = await fetch('/api/recruitments');
+    const res = await fetch(RECRUIT_API_ENDPOINT);
     if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || `HTTP ${res.status}`);
     const json = await res.json();
-    if (!Array.isArray(json.data) || !json.data.length) return;
-    container.innerHTML = json.data.map(item => `
-      <div class="position-card">
+    recruitPositions = Array.isArray(json.data) ? json.data : [];
+
+    if (!recruitPositions.length) {
+      container.innerHTML = '<div class="empty-card">当前暂无招聘岗位，请稍后关注。</div>';
+      if (select) select.innerHTML = '<option value="">当前无岗位可选</option>';
+      return;
+    }
+
+    container.innerHTML = recruitPositions.map(item => `
+      <div class="position-card" data-position-id="${escapeAttr(item.id)}" onclick="setRecruitSelected('${escapeAttr(item.id)}')">
         <div class="position-title">${escapeHtml(item.title)}</div>
         <div class="position-desc">${escapeHtml(item.description)}</div>
         ${item.tags ? item.tags.split(',').map(tag => `<span class="position-tag">${escapeHtml(tag.trim())}</span>`).join('') : ''}
         ${item.apply_url ? `<a class="position-link" href="${escapeAttr(item.apply_url)}" target="_blank" rel="noreferrer">立即报名</a>` : ''}
       </div>
     `).join('');
+
+    if (select) {
+      select.innerHTML = '<option value="">请选择意向岗位</option>' + recruitPositions.map(item => `
+        <option value="${escapeAttr(item.id)}">${escapeHtml(item.title)}</option>
+      `).join('');
+    }
   } catch (err) {
+    container.innerHTML = '<div class="empty-card">招聘岗位加载失败，请稍后刷新。</div>';
+    if (select) select.innerHTML = '<option value="">加载失败</option>';
     console.warn('招贤纳士数据加载失败：', err);
+  }
+}
+
+async function submitRecruitApplication(){
+  const name = document.getElementById('applicantName').value.trim();
+  const positionId = document.getElementById('applicantPosition').value;
+  const qq = document.getElementById('applicantQQ').value.trim();
+  const note = document.getElementById('applicantNote').value.trim();
+  const noteEl = document.getElementById('recruitFormNote');
+  const btn = document.getElementById('recruitSubmitBtn');
+
+  function setNote(msg, status = 'error') {
+    noteEl.textContent = msg;
+    noteEl.style.color = status === 'success' ? '#a0f0c0' : '#ffb3b3';
+  }
+
+  if (!name) { setNote('请输入姓名'); return; }
+  if (!positionId) { setNote('请选择意向岗位'); return; }
+  if (!qq) { setNote('请输入QQ联系方式'); return; }
+
+  const position = recruitPositions.find(item => String(item.id) === String(positionId));
+  if (!position) { setNote('请选择有效的意向岗位'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '提交中…';
+  setNote('正在提交，请稍候…', 'info');
+
+  try {
+    const res = await fetch(RECRUIT_APPLICANT_API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        position_id: position.id,
+        position_title: position.title,
+        qq,
+        note
+      })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+
+    document.getElementById('applicantName').value = '';
+    document.getElementById('applicantPosition').value = '';
+    document.getElementById('applicantQQ').value = '';
+    document.getElementById('applicantNote').value = '';
+    setNote('报名提交成功，我们会尽快与你联系', 'success');
+  } catch (err) {
+    setNote('提交失败：' + (err.message || '请稍后重试'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '提交报名';
   }
 }
 
