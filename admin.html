@@ -474,6 +474,31 @@
           <div class="table-pagination"></div>
         </div>
       </div>
+
+      <div class="table-card" style="margin-top:1.5rem;">
+        <div class="table-toolbar">
+          <div class="table-toolbar-title">岗位报名列表</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>报名时间</th>
+                <th>姓名</th>
+                <th>意向岗位</th>
+                <th>QQ</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody id="recruitApplicantTableBody"></tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <div class="table-count" id="recruitApplicantCount">共 0 条</div>
+          <div class="table-pagination"></div>
+        </div>
+      </div>
     </div>
 
     <div id="tabAccount" style="display:none;">
@@ -526,9 +551,11 @@
 // All data operations go through Vercel Serverless Functions → Neon PostgreSQL.
 const API_ENDPOINT = '/api/submissions';
 const RECRUIT_API_ENDPOINT = '/api/recruitments';
+const RECRUIT_APPLICANT_API_ENDPOINT = '/api/recruit-applicants';
 const AUTH_API_ENDPOINT = '/api/auth';
 let ADMIN_SECRET = localStorage.getItem('adminToken') || ''; // Stored in localStorage after login
 let recruitData = [];
+let recruitApplicants = [];
 
 let DB = [];          // local cache of all records from Neon
 let tableFiltered = [];
@@ -642,6 +669,44 @@ async function apiRecruitPatch(id, payload) {
   }
   if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
   return json.data;
+}
+
+async function apiRecruitApplicantGet() {
+  const res = await fetch(RECRUIT_APPLICANT_API_ENDPOINT, {
+    headers: { 'x-admin-secret': ADMIN_SECRET }
+  });
+  if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || `HTTP ${res.status}`);
+  const json = await res.json();
+  return Array.isArray(json.data) ? json.data : [];
+}
+
+async function loadRecruitApplicants() {
+  try {
+    recruitApplicants = await apiRecruitApplicantGet();
+    renderRecruitApplicantTable();
+  } catch (e) {
+    showToast('报名数据加载失败：' + e.message, 'error');
+  }
+}
+
+function renderRecruitApplicantTable() {
+  const tbody = document.getElementById('recruitApplicantTableBody');
+  if (!recruitApplicants.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-table">暂无报名数据</td></tr>`;
+    document.getElementById('recruitApplicantCount').textContent = '共 0 条';
+    return;
+  }
+  tbody.innerHTML = recruitApplicants.map(item => `
+    <tr>
+      <td style="color:var(--p5);font-size:0.75rem">#${item.id}</td>
+      <td style="white-space:nowrap;color:var(--p6);font-size:0.78rem">${formatDT(item.created_at)}</td>
+      <td>${escapeHtml(item.name)}</td>
+      <td>${escapeHtml(item.position_title)}</td>
+      <td>${escapeHtml(item.qq)}</td>
+      <td class="content-cell" title="${escapeAttr(item.note)}">${escapeHtml(item.note || '—')}</td>
+    </tr>
+  `).join('');
+  document.getElementById('recruitApplicantCount').textContent = `共 ${recruitApplicants.length} 条`;
 }
 
 async function loadRecruitData() {
@@ -947,8 +1012,9 @@ function showTab(tab) {
   } else if (tab === 'recruit') {
     document.getElementById('sidebarRecruitLink').classList.add('active');
     document.getElementById('tabTitle').textContent = '招贤纳士管理';
-    document.getElementById('tabSub').textContent = '同步招贤纳士岗位数据到前端页面';
+    document.getElementById('tabSub').textContent = '同步招贤纳士岗位和报名数据到前端页面';
     loadRecruitData();
+    loadRecruitApplicants();
   } else if (tab === 'account') {
     document.getElementById('sidebarAccountLink').classList.add('active');
     document.getElementById('tabTitle').textContent = '账户设置';
