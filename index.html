@@ -306,6 +306,34 @@
     font-family: var(--font-body); color: var(--p7); line-height: 2.1;
     font-size: 0.98rem; max-width: 480px; letter-spacing: 0.05em;
   }
+  .video-box {
+    max-width: 1100px; margin: 0 auto;
+  }
+  .video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .video-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .video-caption {
+    margin-top: 1.4rem;
+    text-align: center;
+    font-family: var(--font-body);
+    color: var(--p7);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
 
   /* ── Marquee ── */
   .showcase { overflow: hidden; padding: 3.5rem 0; background: var(--p1); }
@@ -688,7 +716,7 @@
       <button class="btn-primary" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'"><span>立即进入</span></button>
     </div>
   </div>
-
+</section>
 <!-- 滚动标签栏 -->
 <div class="showcase">
   <div class="marquee-track">
@@ -873,7 +901,12 @@
       <p class="section-body" style="margin: 1rem auto 0; text-align: center; max-width: 600px;">南渝万能墙庆祝重庆南开中学建校90周年专辑《适合，不适合》。</p>
     </div>
     
-    <p style="text-align: center; margin-top: 2rem; font-family: var(--font-body); color: var(--p6); font-size: 0.9rem; letter-spacing: 0.04em;">点击播放视频在线观看 | 或在抖音搜索北关鱼的驿站观看</p>
+    <div class="video-box">
+      <div class="video-frame">
+        <iframe src="https://go.plvideo.cn/front/video/preview?vid=b1d203ea5ee8bb8b2ad38c72c53511db_b" title="南渝万能墙视频预览" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
+      </div>
+      <p class="video-caption">如若视频无法播放，请刷新页面或复制链接到新标签页打开。</p>
+    </div>
   </div>
 </section>
 
