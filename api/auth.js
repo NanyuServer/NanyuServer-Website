@@ -16,14 +16,15 @@ async function ensureDefaultAdmin(sql) {
       )
     `);
 
-    // Check if default admin exists
-    const existing = await sql(`SELECT COUNT(*) as cnt FROM admin_users WHERE username = $1`, ['admin']);
+        const existing = await sql(`SELECT COUNT(*) as cnt FROM admin_users WHERE username = $1`, ['admin']);
     const count = existing[0]?.cnt || 0;
+    console.log(`[AUTH] Admin user count: ${count}`);
     
     if (count === 0) {
       const defaultPass = 'nywll2026';
       const passwordHash = crypto.createHash('sha256').update(defaultPass).digest('hex');
       const secretKey = crypto.randomBytes(32).toString('hex');
+      console.log(`[AUTH] Creating admin with hash: ${passwordHash}`);
       
       await sql(
         `INSERT INTO admin_users (username, password_hash, secret_key) VALUES ($1, $2, $3)`,
@@ -60,10 +61,16 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const initResult = await ensureDefaultAdmin(sql);
+      
+      // Get current admin info for debugging
+      const admins = await sql(`SELECT username, password_hash FROM admin_users WHERE username = $1`, ['admin']);
+      const adminInfo = admins.length > 0 ? { username: admins[0].username, hash: admins[0].password_hash } : null;
+      
       return res.status(200).json({
         status: 'ready',
         message: initResult.message,
-        hint: '默认账号: admin | 密码: nywll2026'
+        hint: '默认账号: admin | 密码: nywll2026',
+        debug: adminInfo
       });
     } catch (err) {
       return res.status(500).json({ error: '初始化失败', detail: err.message });
@@ -84,18 +91,23 @@ module.exports = async function handler(req, res) {
           `SELECT id, username, password_hash, secret_key FROM admin_users WHERE username = $1`,
           [username]
         );
+        console.log(`[AUTH] Login attempt for user: ${username}, found users: ${users.length}`);
 
         if (users.length === 0) {
+          console.log(`[AUTH] User ${username} not found`);
           return res.status(401).json({ error: '用户名或密码错误' });
         }
 
         const user = users[0];
         const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+        console.log(`[AUTH] Input hash: ${passwordHash}, stored hash: ${user.password_hash}`);
 
         if (passwordHash !== user.password_hash) {
+          console.log(`[AUTH] Password mismatch for user ${username}`);
           return res.status(401).json({ error: '用户名或密码错误' });
         }
 
+        console.log(`[AUTH] Login successful for user ${username}`);
         // Update last_login
         await sql(`UPDATE admin_users SET last_login = NOW() WHERE id = $1`, [user.id]);
 
