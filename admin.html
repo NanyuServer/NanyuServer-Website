@@ -25,8 +25,19 @@
     --font-ui: 'OPPO Sans', sans-serif;
   }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; -moz-osx-font-smoothing: grayscale; -webkit-font-smoothing: antialiased; }
+  body { text-rendering: optimizeLegibility; line-height: 1.65; }
   body { font-family: var(--font-ui); background: var(--p1); color: var(--p8); overflow-x: hidden; min-height: 100vh; }
+
+  h1, h2, h3, h4, h5, h6, .login-logo-title, .admin-topbar-title, .form-card-title, .table-toolbar-title { font-weight: 800; }
+  @media (hover: none), (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none !important; }
+  }
+  @media (max-width: 1024px) {
+    .admin-topbar-title, .form-card-title { font-size: 1.05rem; }
+    .login-btn, .table-filter-select, .table-search-input { font-size: 0.95rem; }
+  }
   body::before { content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:0.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   
   nav {
@@ -561,6 +572,22 @@ let DB = [];          // local cache of all records from Neon
 let tableFiltered = [];
 let tablePage = 1;
 const TABLE_PAGE_SIZE = 8;
+
+// ── Helpers ──
+function getTypeEmoji(type) {
+  const map = {
+    '寻物启事': '🔍',
+    '表白': '💌',
+    '挂人': '⚠️',
+    '扩列': '🤝',
+    '吐槽': '💬',
+    '交易': '💰',
+    '捞人、物': '🎣',
+    '打听资讯': '❓',
+    '寻找搭子': '👫'
+  };
+  return map[type] || '📄';
+}
 
 // ── API Helpers ──
 async function apiGet() {
@@ -1129,7 +1156,7 @@ function renderTable() {
     <tr>
       <td style="color:var(--p5);font-size:0.75rem">#${r.id}</td>
       <td style="white-space:nowrap;color:var(--p6);font-size:0.78rem">${formatDT(r.created_at)}</td>
-      <td><span class="type-badge type-${r.type}">${r.type}</span></td>
+      <td><span class="type-badge type-${r.type}">${getTypeEmoji(r.type)} ${r.type}</span></td>
       <td class="content-cell" title="${escapeAttr(r.content)}">${escapeHtml(r.content)}</td>
       <td>
         <button class="action-btn action-edit" onclick="enterEditMode(${r.id})">编辑</button>
