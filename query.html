@@ -45,10 +45,10 @@
   body::before { content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
   /* Nav */
-  nav { position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem 1rem 4px;backdrop-filter:blur(20px);background:linear-gradient(180deg,rgba(13,8,24,0.85) 0%,transparent 100%);border-bottom:1px solid rgba(123,85,212,0.15); }
-  .logo { display:flex;align-items:center; }
-  .logo img { display:block;height:3.2rem;width:auto;transform:translateX(40px); }
-  .nav-links { display:flex;gap:2.2rem;list-style:none; }
+  nav { position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem 1rem 4px;backdrop-filter:blur(24px);background:rgba(13,8,24,0.55);border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 16px 40px rgba(0,0,0,0.14); }
+  .logo { display:flex;align-items:center; margin-left: 4px; }
+  .logo img { display:block;height:3.2rem;width:auto;transform:none; }
+  .nav-links { display:flex;gap:1rem;list-style:none; }
   .nav-links a { font-family:var(--font-ui);color:var(--p7);text-decoration:none;font-size:0.82rem;letter-spacing:0.06em;position:relative;transition:color 0.3s; }
   .nav-links a::after { content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform 0.4s var(--easing); }
   .nav-links a:hover { color:var(--gold); }
@@ -212,7 +212,9 @@
   .footer-copy { font-family:var(--font-body);font-size:0.73rem;color:var(--p5);letter-spacing:0.06em; }
 
   @media (max-width: 768px) {
-    nav { padding:1rem 1.5rem;background:rgba(13,8,24,0.96); }
+    nav { padding:1rem 1.5rem 1rem 2px;background:rgba(13,8,24,0.96); }
+    .logo { margin-left: 2px; }
+    .logo img { height:1.92rem; }
     .nav-links,.nav-cta { display:none; }
     .hamburger { display:flex; }
     body { cursor:auto; }
@@ -371,7 +373,17 @@ function formatDate(iso) {
 }
 
 function getTypeEmoji(type) {
-  const map = { '寻物启事':'🔍','表白':'💌','挂人':'⚠️','扩列':'🤝','吐槽':'💬','二手出售':'🛍️','捞人':'🎣' };
+  const map = {
+    '寻物启事': '🔍',
+    '表白': '💌',
+    '挂人': '⚠️',
+    '扩列': '🤝',
+    '吐槽': '💬',
+    '交易': '💰',
+    '捞人、物': '🎣',
+    '打听资讯': '❓',
+    '寻找搭子': '👫'
+  };
   return map[type] || '📄';
 }
 
