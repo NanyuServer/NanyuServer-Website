@@ -3,6 +3,7 @@
 // Handles: DELETE /api/submissions/:id → delete record
 
 const { neon } = require('@neondatabase/serverless');
+const { validateAdminSecret } = require('../adminAuth');
 
 function parseJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -38,6 +39,11 @@ module.exports = async function handler(req, res) {
     const VALID_TYPES = ['寻物启事', '表白', '挂人', '扩列', '吐槽', '交易', '捞人、物', '打听资讯', '寻找搭子'];
 
     if (req.method === 'PATCH') {
+      const adminSecret = req.headers['x-admin-secret'];
+      if (!(await validateAdminSecret(adminSecret))) {
+        return res.status(401).json({ error: '未授权，请检查管理员密钥' });
+      }
+
       const { id } = req.query;
       if (!id || isNaN(parseInt(id, 10))) {
         return res.status(400).json({ error: '无效的稿件 ID' });
@@ -85,7 +91,7 @@ module.exports = async function handler(req, res) {
 
     // Admin auth
     const adminSecret = req.headers['x-admin-secret'];
-    if (process.env.ADMIN_SECRET && adminSecret !== process.env.ADMIN_SECRET) {
+    if (!(await validateAdminSecret(adminSecret))) {
       return res.status(401).json({ error: '未授权，请检查管理员密钥' });
     }
 
