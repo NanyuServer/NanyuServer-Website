@@ -39,10 +39,11 @@
   @media (max-width: 1024px) {
     .page-title, .hero-title { font-size: clamp(1.9rem, 6vw, 3.4rem); }
     .course-preview h2, .info-text { font-size: 1rem; }
-  }
-    color: var(--p8);
-    overflow-x: hidden;
-    min-height: 100vh;
+    body {
+      color: var(--p8);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
   }
   body::before {
     content:'';
@@ -56,14 +57,14 @@
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 500;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 3rem 1rem 2px;
+    padding: 1rem 3rem 1rem 4px;
     backdrop-filter: blur(24px);
     background: rgba(13,8,24,0.55);
     border-bottom: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
   }
-  .logo { display: flex; align-items: center; margin-left: 2px; }
-  .logo img { display:block; height:1.92rem; width:auto; transform: none; }
+  .logo { display: flex; align-items: center; margin-left: 4px; }
+  .logo img { display:block; height:3.2rem; width:auto; transform: none; }
   .nav-links { display:flex; gap:1rem; list-style:none; }
   .nav-links a { font-family: var(--font-ui); color: var(--p6); text-decoration:none; font-size:0.82rem; letter-spacing:0.06em; position:relative; }
   .nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:right; transition:transform 0.4s ease; }
@@ -114,7 +115,9 @@
   footer { padding:2.5rem 2rem; text-align:center; border-top:1px solid rgba(75,47,163,0.2); }
   .footer-copy { font-family:var(--font-body); font-size:0.73rem; color:var(--p5); letter-spacing:0.06em; }
   @media (max-width:768px) {
-    nav { padding:1rem 1.5rem; background:rgba(13,8,24,0.96); }
+    nav { padding:1rem 1.5rem 1rem 2px; background:rgba(13,8,24,0.96); }
+    .logo { margin-left: 2px; }
+    .logo img { height:1.92rem; }
     .nav-links, .nav-cta { display:none; }
     .hamburger { display:flex; }
     .page-hero { padding:7rem 1.25rem 3rem; }
