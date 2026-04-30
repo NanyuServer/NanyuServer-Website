@@ -4,6 +4,7 @@
 //          POST /api/submissions → insert new record
 
 const { neon } = require('@neondatabase/serverless');
+const { validateAdminSecret } = require('./adminAuth');
 
 module.exports = async function handler(req, res) {
   // CORS headers (adjust origin in production if needed)
@@ -64,9 +65,9 @@ module.exports = async function handler(req, res) {
 
   // ── POST: insert a new submission ──
   if (req.method === 'POST') {
-    // Simple admin auth via secret header (set ADMIN_SECRET in Vercel env vars)
+    // Simple admin auth via secret header
     const adminSecret = req.headers['x-admin-secret'];
-    if (process.env.ADMIN_SECRET && adminSecret !== process.env.ADMIN_SECRET) {
+    if (!(await validateAdminSecret(adminSecret))) {
       return res.status(401).json({ error: '未授权，请检查管理员密钥' });
     }
 
