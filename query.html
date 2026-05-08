@@ -66,20 +66,19 @@
   .hamburger.open span:nth-child(2) { opacity:0;transform:scaleX(0); }
   .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
   .mobile-nav {
-    display: flex; position: fixed; inset: 0; z-index: 490;
-    background: rgba(13,8,24,0.72);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(24px);
-    flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem;
-    opacity: 0; transform: translateY(-24px); visibility: hidden;
-    pointer-events: none; transition: opacity 0.35s var(--easing), transform 0.35s var(--easing), visibility 0.35s ease;
+    display: flex; position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+    z-index: 490; width: calc(100% - 48px); max-width: 520px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    flex-direction: column; align-items: stretch; gap: 0.6rem; padding: 0.4rem;
+    opacity: 0; transform: translateY(-8px) translateX(-50%); visibility: hidden;
+    pointer-events: none; transition: opacity 0.25s var(--easing), transform 0.25s var(--easing), visibility 0.25s ease;
   }
-  .mobile-nav.open {
-    opacity: 1; transform: translateY(0); visibility: visible; pointer-events: auto;
-  }
-  .mobile-nav a { font-family:var(--font-ui);font-size:1.4rem;color:var(--p7);text-decoration:none;letter-spacing:0.08em;transition:color 0.3s;padding:0.5rem 2rem;border-bottom:1px solid rgba(123,85,212,0.2);width:100%;text-align:center; }
+  .mobile-nav.open { opacity: 1; transform: translateY(0) translateX(-50%); visibility: visible; pointer-events: auto; }
+  .mobile-nav a { font-family:var(--font-ui); font-size:1rem; color:var(--p7); text-decoration:none; letter-spacing:0.04em; padding:0.6rem 0.9rem; text-align:left; display:block; }
+  .mobile-nav a + a { border-top: 1px solid rgba(123,85,212,0.06); }
   .mobile-nav a:hover { color:var(--gold); }
-  .mobile-nav .mobile-cta { padding:0.9rem 2.8rem;background:linear-gradient(135deg,var(--p4),var(--rose));color:white;border:none;border-radius:4px;font-family:var(--font-ui);font-size:1rem;letter-spacing:0.08em; }
+  .mobile-nav .mobile-cta { padding:0.7rem 1.2rem; background:linear-gradient(135deg,var(--p4),var(--rose)); color:white; border:none; border-radius:8px; font-family:var(--font-ui); font-size:0.95rem; letter-spacing:0.08em; }
 
   /* Page header */
   .page-hero {
@@ -238,10 +237,11 @@
 <div class="mobile-nav" id="mobileNav">
   <a href="index.html" onclick="closeMobileNav()">北关鱼的驿站</a>
   <a href="query.html" onclick="closeMobileNav()">稿件查询</a>
-  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
   <a href="course.html" onclick="closeMobileNav()">公益课程</a>
-  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
+  <a href="feedback.html" onclick="closeMobileNav()">有求必应</a>
   <a href="cooperation.html" onclick="closeMobileNav()">合作与共创</a>
+  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
+  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
   <button class="mobile-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'">立即进入</button>
 </div>
 
@@ -252,10 +252,11 @@
   <ul class="nav-links">
     <li><a href="index.html">返回主页</a></li>
     <li><a href="query.html" class="active">稿件查询</a></li>
-    <li><a href="recruit.html">招贤纳士</a></li>
     <li><a href="course.html">公益课程</a></li>
-    <li><a href="about.html">关于我们</a></li>
+    <li><a href="feedback.html">有求必应</a></li>
     <li><a href="cooperation.html">合作与共创</a></li>
+    <li><a href="recruit.html">招贤纳士</a></li>
+    <li><a href="about.html">关于我们</a></li>
   </ul>
   <button class="nav-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'"><span>立即进入</span></button>
   <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="菜单">
