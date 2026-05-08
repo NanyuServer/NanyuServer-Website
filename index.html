@@ -1052,6 +1052,85 @@ const statObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 document.querySelectorAll('.stat-num[data-target]').forEach(el => statObs.observe(el));
 
+// Feedback form
+async function loadApprovedFeedback() {
+  try {
+    const res = await fetch('/api/feedback');
+    if (!res.ok) throw new Error('加载失败');
+    const data = await res.json();
+    renderApprovedFeedback(data);
+  } catch (e) {
+    console.warn('加载已审核内容失败', e);
+  }
+}
+
+function renderApprovedFeedback(items) {
+  const container = document.getElementById('approvedList');
+  if (!container) return;
+  if (!items.length) {
+    container.innerHTML = '<div style="color: var(--p7); padding: 1.5rem; border: 1px solid rgba(123,85,212,0.2); border-radius: 12px; background: rgba(75,47,163,0.2);">暂无已审核内容</div>';
+    return;
+  }
+  container.innerHTML = items.map(item => `
+    <div style="margin-bottom:1rem;padding:1.25rem;border-radius:12px;background:rgba(29,14,58,0.85);border:1px solid rgba(123,85,212,0.18);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:0.75rem;">
+        <span style="font-size:0.82rem;color:var(--p6);">${escapeHtml(item.type)}</span>
+        <span style="font-size:0.78rem;color:${item.status === 'approved' ? '#34d399' : item.status === 'transferred' ? '#f59e0b' : item.status === 'replied' ? '#60a5fa' : item.status === 'rejected' ? 'red' : '#f9a8d4'};">${item.status === 'approved' ? '已审核' : item.status === 'transferred' ? '转接中' : item.status === 'replied' ? '已答复' : item.status === 'rejected' ? '不通过' : '待审核'}</span>
+      </div>
+      <p style="color: var(--p7); line-height:1.8; margin-bottom:0.8rem;">${escapeHtml(item.message)}</p>
+      ${item.reply ? `<div style="padding:0.9rem 1rem;border-radius:10px;background:rgba(75,47,163,0.2);border:1px solid rgba(123,85,212,0.2);color:var(--p8);font-size:0.9rem;">回复：${escapeHtml(item.reply)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/"/g,'&quot;');
+}
+
+async function submitFeedbackForm(event) {
+  if (event) event.preventDefault();
+  const form = document.getElementById('feedbackForm');
+  if (!form) return;
+  const type = form.querySelector('input[name="type"]:checked');
+  const message = document.getElementById('message').value.trim();
+  if (!type) {
+    alert('请选择反馈类型');
+    return;
+  }
+  if (!message) {
+    alert('请输入反馈内容');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: type.value, message })
+    });
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      throw new Error(json.error || '提交失败');
+    }
+    alert('反馈已提交，感谢你的建议！');
+    form.reset();
+    loadApprovedFeedback();
+  } catch (e) {
+    alert('提交失败：' + e.message);
+  }
+}
+
+const feedbackForm = document.getElementById('feedbackForm');
+if (feedbackForm) {
+  feedbackForm.addEventListener('submit', submitFeedbackForm);
+}
+
+loadApprovedFeedback();
+
 // Modal
 function openModal() {
   const modal = document.getElementById('joinModal');
