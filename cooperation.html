@@ -121,18 +121,17 @@
   .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
   .mobile-nav {
-    display: flex; position: fixed; inset: 0; z-index: 490;
-    background: rgba(13,8,24,0.72);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(24px);
-    flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem;
-    opacity: 0; transform: translateY(-24px); visibility: hidden;
-    pointer-events: none; transition: opacity 0.35s var(--easing), transform 0.35s var(--easing), visibility 0.35s ease;
+    display: flex; position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+    z-index: 490; width: calc(100% - 48px); max-width: 520px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    flex-direction: column; align-items: stretch; gap: 0.6rem; padding: 0.4rem;
+    opacity: 0; transform: translateY(-8px) translateX(-50%); visibility: hidden;
+    pointer-events: none; transition: opacity 0.25s var(--easing), transform 0.25s var(--easing), visibility 0.25s ease;
   }
-  .mobile-nav.open {
-    opacity: 1; transform: translateY(0); visibility: visible; pointer-events: auto;
-  }
-  .mobile-nav a { font-family: var(--font-ui); font-size: 1.4rem; color: var(--p7); text-decoration: none; letter-spacing: 0.08em; transition: color 0.3s; padding: 0.5rem 2rem; border-bottom: 1px solid rgba(123,85,212,0.2); width: 100%; text-align: center; }
+  .mobile-nav.open { opacity: 1; transform: translateY(0) translateX(-50%); visibility: visible; pointer-events: auto; }
+  .mobile-nav a { font-family: var(--font-ui); font-size: 1rem; color: var(--p7); text-decoration: none; letter-spacing: 0.04em; padding: 0.6rem 0.9rem; text-align: left; display: block; }
+  .mobile-nav a + a { border-top: 1px solid rgba(123,85,212,0.06); }
   .mobile-nav a:hover { color: var(--gold); }
 
   .page-hero {
@@ -205,13 +204,14 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="index.html" onclick="closeMobileNav()">北关鱼的驿站</a>
+  <a href="index.html" onclick="closeMobileNav()">返回主页</a>
   <a href="query.html" onclick="closeMobileNav()">稿件查询</a>
-  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
   <a href="course.html" onclick="closeMobileNav()">公益课程</a>
-  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
+  <a href="feedback.html" onclick="closeMobileNav()">有求必应</a>
   <a href="cooperation.html" onclick="closeMobileNav()">合作与共创</a>
-  <button class="mobile-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'" style="padding:0.9rem 2.8rem;background:linear-gradient(135deg,var(--p4),var(--rose));color:white;border:none;border-radius:4px;font-family:var(--font-ui);font-size:1rem;letter-spacing:0.08em;">立即进入</button>
+  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
+  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
+  <button class="mobile-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'" style="padding:0.7rem 1.2rem;background:linear-gradient(135deg,var(--p4),var(--rose));color:white;border:none;border-radius:8px;font-family:var(--font-ui);font-size:0.95rem;letter-spacing:0.08em;">立即进入</button>
 </div>
 
 <nav>
@@ -219,12 +219,13 @@
     <img src="logo.webp" alt="南渝万能墙 logo">
   </div>
   <ul class="nav-links">
-    <li><a href="index.html">北关鱼的驿站</a></li>
+    <li><a href="index.html">返回主页</a></li>
     <li><a href="query.html">稿件查询</a></li>
-    <li><a href="recruit.html">招贤纳士</a></li>
     <li><a href="course.html">公益课程</a></li>
-    <li><a href="about.html">关于我们</a></li>
+    <li><a href="feedback.html">有求必应</a></li>
     <li><a href="cooperation.html" class="active">合作与共创</a></li>
+    <li><a href="recruit.html">招贤纳士</a></li>
+    <li><a href="about.html">关于我们</a></li>
   </ul>
   <button class="nav-cta" onclick="window.location.href='https://qm.qq.com/q/FHAbiDBIQO'"><span>立即进入</span></button>
   <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="菜单">
@@ -252,7 +253,7 @@
         </svg>
       </div>
       <h3 class="cooperation-title">商业合作</h3>
-      <p class="cooperation-desc">我们欢迎各类企业、品牌与南渝万能墙开展商业合作。通过精准的校园营销渠道，帮助合作伙伴触达目标用户群体，实现共赢发展。</p>
+      <p class="cooperation-desc">我们欢迎校园组织和机构与南渝万能墙开展商业合作。通过精准的校园营销渠道，帮助合作伙伴触达目标用户群体，实现共赢发展。</p>
     </div>
 
     <div class="cooperation-card">
@@ -265,7 +266,7 @@
         </svg>
       </div>
       <h3 class="cooperation-title">活动合作</h3>
-      <p class="cooperation-desc">携手举办各类校园活动，包括讲座、workshop、竞赛等。我们提供专业的活动策划和执行能力，以及庞大的学生群体资源支持。</p>
+      <p class="cooperation-desc">携手举办各类校园活动，包括竞赛、社团等。我们提供专业的活动策划和执行能力，以及庞大的学生群体资源支持。</p>
     </div>
 
     <div class="cooperation-card">
@@ -275,7 +276,7 @@
         </svg>
       </div>
       <h3 class="cooperation-title">共创计划</h3>
-      <p class="cooperation-desc">邀请有创意的同学加入我们的共创计划，一起开发新功能、设计新内容、探索新的可能性。让我们共同打造更好的校园服务平台。</p>
+      <p class="cooperation-desc">欢迎有创意的同学参与共创计划，将自己的作品以共创形式发布在抖音账号北关鱼的驿站上。</p>
     </div>
   </div>
 </div>
