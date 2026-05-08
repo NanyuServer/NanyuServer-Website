@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>有求必应 — 南渝万能墙</title>
+<style>
+  :root{--p1:#0d0818;--p2:#1a0e3a;--p7:#d4b8f5;--p8:#f0e6ff;--gold:#e8c97a;--p4:#4c2fa3;--rose:#e86fa3;--font-ui: 'OPPO Sans', sans-serif;--font-title:'OPPO Sans',sans-serif;--font-body:'OPPO Sans',sans-serif;--easing:cubic-bezier(0.16,1,0.3,1)}
+  body{font-family:var(--font-body);background:var(--p1);color:var(--p8);margin:0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(13,8,24,0.55);backdrop-filter:blur(12px)}
+  .logo img{height:3rem}
+  .nav-links{display:flex;gap:1rem;list-style:none}
+  .nav-links a{color:var(--p7);text-decoration:none;font-size:0.9rem}
+  .mobile-nav{display:flex;position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:490;width:calc(100% - 48px);max-width:520px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(8px);flex-direction:column;align-items:stretch;gap:0.6rem;padding:0.4rem;opacity:0;visibility:hidden;pointer-events:none;transition:0.25s}
+  .mobile-nav.open{opacity:1;visibility:visible;pointer-events:auto}
+  .mobile-nav a{padding:0.6rem 0.9rem;color:var(--p7);text-decoration:none}
+  .section-title{color:#fff}
+  .container{max-width:1100px;margin:100px auto 60px;padding:0 1rem}
+  .card{background:linear-gradient(135deg,rgba(29,14,58,0.9),rgba(45,27,107,0.5));padding:1.5rem;border-radius:12px;border:1px solid rgba(123,85,212,0.18)}
+  .btn-primary{padding:0.9rem 1.2rem;border-radius:8px;background:linear-gradient(135deg,var(--p4),var(--rose));color:#fff;border:none}
+  @media (max-width:768px){nav{padding:1rem} .container{margin-top:120px}}
+</style>
+</head>
+<body>
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html" onclick="closeMobileNav()">北关鱼的驿站</a>
+  <a href="query.html" onclick="closeMobileNav()">稿件查询</a>
+  <a href="course.html" onclick="closeMobileNav()">公益课程</a>
+  <a href="feedback.html" onclick="closeMobileNav()">有求必应</a>
+  <a href="cooperation.html" onclick="closeMobileNav()">合作与共创</a>
+  <a href="recruit.html" onclick="closeMobileNav()">招贤纳士</a>
+  <a href="about.html" onclick="closeMobileNav()">关于我们</a>
+</div>
+<nav>
+  <div class="logo"><a href="index.html"><img src="logo.webp" alt="logo"></a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">北关鱼的驿站</a></li>
+    <li><a href="query.html">稿件查询</a></li>
+    <li><a href="course.html">公益课程</a></li>
+    <li><a href="feedback.html" class="active">有求必应</a></li>
+    <li><a href="cooperation.html">合作与共创</a></li>
+    <li><a href="recruit.html">招贤纳士</a></li>
+    <li><a href="about.html">关于我们</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="菜单"><span style="display:block;width:22px;height:2px;background:var(--p7);margin:4px 0"></span><span style="display:block;width:18px;height:2px;background:var(--p7);margin:4px 0"></span><span style="display:block;width:14px;height:2px;background:var(--p7);margin:4px 0"></span></button>
+</nav>
+
+<main class="container">
+  <div style="text-align:center;margin-bottom:2rem;">
+    <div class="section-label">有求必应</div>
+    <h1 class="section-title">你的声音，我们倾听</h1>
+    <p style="color:var(--p7);max-width:720px;margin:0.75rem auto">在这里提交校园资讯或问题反馈，我们会认真处理并在后台回复。</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="card">
+      <h3 style="color:var(--gold);margin-bottom:1rem">提交反馈</h3>
+      <form id="feedbackForm">
+        <div style="margin-bottom:0.8rem;color:var(--p7)"><label><input type="radio" name="type" value="校园资讯" required> 校园资讯</label> &nbsp; <label><input type="radio" name="type" value="问题反馈"> 问题反馈</label></div>
+        <div style="margin-bottom:0.8rem"><textarea id="message" rows="6" style="width:100%;padding:0.7rem;border-radius:8px;background:rgba(75,47,163,0.06);border:1px solid rgba(123,85,212,0.08);color:var(--p8)" placeholder="请详细描述你的需求或反馈..." required></textarea></div>
+        <div><button class="btn-primary" type="submit">提交反馈</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--gold);margin-bottom:1rem">已审核内容</h3>
+      <div id="approvedList">加载中…</div>
+    </div>
+  </div>
+</main>
+
+<script>
+function toggleMobileNav(){const n=document.getElementById('mobileNav'),b=document.getElementById('hamburger');n.classList.toggle('open');b.classList.toggle('open');}
+function closeMobileNav(){document.getElementById('mobileNav').classList.remove('open');document.getElementById('hamburger').classList.remove('open');}
+
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escapeAttr(s){return String(s).replace(/\"/g,'&quot;');}
+
+async function loadApprovedFeedback(){try{const res=await fetch('/api/feedback');if(!res.ok)throw new Error('加载失败');const data=await res.json();renderApprovedFeedback(data);}catch(e){document.getElementById('approvedList').innerText='加载失败';console.warn(e);} }
+function renderApprovedFeedback(items){const c=document.getElementById('approvedList');if(!items||!items.length){c.innerHTML='<div style="color:var(--p7);padding:1rem">暂无已审核内容</div>';return;}c.innerHTML=items.map(i=>`<div style="padding:0.9rem;border-radius:10px;margin-bottom:0.6rem;background:rgba(29,14,58,0.7);border:1px solid rgba(123,85,212,0.08)"><div style="font-size:0.85rem;color:var(--p7);margin-bottom:0.4rem">${escapeHtml(i.type)} · ${i.status==='approved'?'已审核':i.status==='replied'?'已答复':i.status}</div><div style="color:var(--p8)">${escapeHtml(i.message)}</div>${i.reply?`<div style="margin-top:0.6rem;padding:0.6rem;border-radius:8px;background:rgba(75,47,163,0.06);color:var(--p7)">回复：${escapeHtml(i.reply)}</div>`:''}</div>`).join('');}
+
+async function submitFeedbackForm(e){if(e) e.preventDefault();const form=document.getElementById('feedbackForm');const type=form.querySelector('input[name="type"]:checked');const message=document.getElementById('message').value.trim();if(!type){alert('请选择反馈类型');return;}if(!message){alert('请输入反馈内容');return;}try{const res=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:type.value,message})});if(!res.ok){const j=await res.json().catch(()=>({}));throw new Error(j.error||'提交失败');}alert('反馈已提交');form.reset();loadApprovedFeedback();}catch(err){alert('提交失败：'+err.message);} }
+document.getElementById('feedbackForm').addEventListener('submit',submitFeedbackForm);
+loadApprovedFeedback();
+</script>
+</body>
+</html>
