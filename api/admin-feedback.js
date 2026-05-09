@@ -1,67 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-
-const feedbackFile = path.join(__dirname, '../data/feedback.json');
-
-// 初始化文件路径和数据
-function ensureFeedbackFile() {
-  try {
-    const dataDir = path.join(__dirname, '../data');
-    
-    // 创建目录
-    if (!fs.existsSync(dataDir)) {
-      try {
-        fs.mkdirSync(dataDir, { recursive: true });
-        console.log('Created data directory:', dataDir);
-      } catch (dirError) {
-        console.error('Failed to create directory:', dirError);
-        throw dirError;
-      }
-    }
-    
-    // 创建文件
-    if (!fs.existsSync(feedbackFile)) {
-      try {
-        fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
-        console.log('Created feedback file:', feedbackFile);
-      } catch (fileError) {
-        console.error('Failed to create file:', fileError);
-        throw fileError;
-      }
-    }
-  } catch (error) {
-    console.error('Error ensuring feedback file at', feedbackFile, ':', error);
-    throw error;
-  }
-}
-
-// 安全读取反馈数据
-function readFeedbackData() {
-  try {
-    ensureFeedbackFile();
-    const data = fs.readFileSync(feedbackFile, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading feedback data:', error);
-    console.error('Feedback file path:', feedbackFile);
-    return [];
-  }
-}
-
-// 安全写入反馈数据
-function writeFeedbackData(data) {
-  try {
-    ensureFeedbackFile();
-    fs.writeFileSync(feedbackFile, JSON.stringify(data, null, 2));
-    return { success: true };
-  } catch (error) {
-    console.error('Error writing feedback data:', error);
-    console.error('Feedback file path:', feedbackFile);
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    return { success: false, error: error.message };
-  }
-}
+const storage = require('../lib/storage.js');
 
 module.exports = async (req, res) => {
   // 设置CORS头
@@ -80,7 +17,7 @@ module.exports = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const feedbacks = readFeedbackData();
+      const feedbacks = await storage.read();
       res.status(200).json(feedbacks);
     } catch (error) {
       console.error('Error reading feedback:', error);
@@ -105,7 +42,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'ID不能为空' });
       }
 
-      const feedbacks = readFeedbackData();
+      const feedbacks = await storage.read();
       const feedbackIndex = feedbacks.findIndex(f => f.id === id);
 
       if (feedbackIndex === -1) {
@@ -148,7 +85,7 @@ module.exports = async (req, res) => {
 
       feedback.updatedAt = new Date().toISOString();
 
-      const writeResult = writeFeedbackData(feedbacks);
+      const writeResult = await storage.write(feedbacks);
       if (!writeResult.success) {
         return res.status(500).json({ error: '保存失败: ' + writeResult.error });
       }
