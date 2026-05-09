@@ -1,127 +1,127 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const feedbackForm = document.getElementById('feedback-form');
-  const feedbackDisplay = document.getElementById('feedback-display');
+const fs = require('fs');
+const path = require('path');
 
-  // Fetch and display feedbacks (approved / transferred / replied)
-  async function loadFeedback() {
+const feedbackFile = path.join(__dirname, '../data/feedback.json');
+
+// 确保数据目录存在
+const dataDir = path.join(__dirname, '../data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// 初始化反馈数据文件
+if (!fs.existsSync(feedbackFile)) {
+  fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
+}
+
+module.exports = async (req, res) => {
+  // 设置CORS头
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method === 'POST') {
     try {
-      const response = await fetch('/api/feedback');
-      if (!response.ok) throw new Error('Failed to load feedback');
-      const feedbacks = await response.json();
+      const { type, message } = req.body;
 
-      feedbackDisplay.innerHTML = '';
-      
-      if (!feedbacks || feedbacks.length === 0) {
-        feedbackDisplay.innerHTML = `
-          <div class="state-box">
-            <div class="state-title">暂无已审核内容</div>
-            <div class="state-sub">已审核的反馈将显示在此</div>
-          </div>
-        `;
-        return;
+      if (!type || !message) {
+        return res.status(400).json({ error: '类型和内容不能为空' });
       }
 
-      feedbacks.forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'submission-card';
-        
-        const statusMap = {
-          approved: '已审核',
-          transferred: '转接中',
-          replied: '已回复'
-        };
-        const statusLabel = statusMap[f.status] || f.status;
-        const statusClass = `status-${f.status}`;
-        
-        const createdDate = new Date(f.createdAt).toLocaleString('zh-CN');
-        
-        let replyHtml = '';
-        if (f.reply && f.reply.trim()) {
-          replyHtml = `
-            <div class="card-reply">
-              <div class="card-reply-title">💬 管理员回复：</div>
-              <div class="card-reply-content">${escapeHtml(f.reply)}</div>
-            </div>
-          `;
-        }
+      // 读取现有反馈
+      const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
 
-        card.innerHTML = `
-          <div class="card-header">
-            <span class="card-type-badge type-${escapeHtml(f.type)}">${escapeHtml(f.type)}</span>
-            <span class="card-time">${createdDate}</span>
-          </div>
-          <div class="card-content">${escapeHtml(f.message)}</div>
-          <div class="card-status">
-            <span class="status-badge ${statusClass}">● ${statusLabel}</span>
-          </div>
-          ${replyHtml}
-        `;
-        feedbackDisplay.appendChild(card);
-      });
+      // 创建新反馈
+      const newFeedback = {
+        id: Date.now().toString(),
+        type,
+        message,
+        status: 'pending', // pending, approved, rejected, transferred, replied
+        reply: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      feedbacks.push(newFeedback);
+
+      // 保存到文件
+      fs.writeFileSync(feedbackFile, JSON.stringify(feedbacks, null, 2));
+
+      res.status(200).json({ success: true, id: newFeedback.id });
     } catch (error) {
-      console.error('Error loading feedback:', error);
-      feedbackDisplay.innerHTML = `
-        <div class="state-box">
-          <div class="state-title">加载失败</div>
-          <div class="state-sub">请稍后重试</div>
-        </div>
-      `;
+      console.error('Error saving feedback:', error);
+      res.status(500).json({ error: '服务器错误' });
     }
-  }
-
-  // Submit feedback (send JSON)
-  feedbackForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const type = document.getElementById('category').value.trim();
-    const message = document.getElementById('feedback-content').value.trim();
-    
-    if (!type) {
-      showToast('请选择反馈类型', 'error');
-      return;
-    }
-    if (!message) {
-      showToast('请输入反馈内容', 'error');
-      return;
-    }
-
+  } else if (req.method === 'GET') {
     try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, message })
-      });
+      const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
 
-      if (!response.ok) throw new Error('Failed to submit feedback');
+      // 返回已审核、转接中或已回复的内容
+      const visibleFeedbacks = feedbacks.filter(f => ['approved','replied','transferred'].includes(f.status));
       
-      showToast('反馈提交成功，感谢您的建议！', 'success');
-      feedbackForm.reset();
-      loadFeedback();
+      // 按时间倒序排列
+      visibleFeedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      res.status(200).json(visibleFeedbacks);
     } catch (error) {
-      console.error('Error submitting feedback:', error);
-      showToast('提交失败，请稍后重试', 'error');
+      console.error('Error reading feedback:', error);
+      res.status(500).json({ error: '服务器错误' });
     }
-  });
+  } else if (req.method === 'PATCH') {
+    try {
+      const { id, status, reply } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID不能为空' });
+      }
 
-  // Show toast notification
-  function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = `toast show toast-${type}`;
-    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+      const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
+      const feedback = feedbacks.find(f => f.id === id);
+
+      if (!feedback) {
+        return res.status(404).json({ error: '反馈不存在' });
+      }
+
+      // 更新状态和回复
+      if (status) {
+        feedback.status = status;
+      }
+      if (reply !== undefined) {
+        feedback.reply = reply;
+      }
+      feedback.updatedAt = new Date().toISOString();
+
+      // 保存到文件
+      fs.writeFileSync(feedbackFile, JSON.stringify(feedbacks, null, 2));
+
+      res.status(200).json({ success: true, feedback });
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+      res.status(500).json({ error: '服务器错误' });
+    }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { id } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'ID不能为空' });
+      }
+
+      let feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
+      feedbacks = feedbacks.filter(f => f.id !== id);
+
+      fs.writeFileSync(feedbackFile, JSON.stringify(feedbacks, null, 2));
+
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      res.status(500).json({ error: '服务器错误' });
+    }
+  } else {
+    res.status(405).json({ error: '方法不允许' });
   }
-
-  // Escape HTML to prevent XSS
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  // Load feedback on page load
-  loadFeedback();
-});
+};
