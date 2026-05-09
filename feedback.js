@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (f.reply && f.reply.trim()) {
           replyHtml = `
             <div class="card-reply">
-              <div class="card-reply-title">💬 管理员回复：</div>
+              <div class="card-reply-title">💬 万能墙回复：</div>
               <div class="card-reply-content">${escapeHtml(f.reply)}</div>
             </div>
           `;
