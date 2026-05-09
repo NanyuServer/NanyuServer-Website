@@ -1,57 +1,127 @@
 document.addEventListener('DOMContentLoaded', () => {
   const feedbackForm = document.getElementById('feedback-form');
   const feedbackDisplay = document.getElementById('feedback-display');
-  // frontend no longer provides reply UI; admin handles replies
 
   // Fetch and display feedbacks (approved / transferred / replied)
   async function loadFeedback() {
-    const response = await fetch('/api/feedback');
-    const feedbacks = await response.json();
+    try {
+      const response = await fetch('/api/feedback');
+      if (!response.ok) throw new Error('Failed to load feedback');
+      const feedbacks = await response.json();
 
-    feedbackDisplay.innerHTML = '';
-    feedbacks.forEach(f => {
-      const li = document.createElement('li');
-      li.className = 'submission-card';
-      const statusMap = {
-        approved: '已审核',
-        transferred: '转接中',
-        replied: '已答复'
-      };
-      const statusLabel = statusMap[f.status] || f.status;
-      const badge = `<div style="margin-bottom:8px;">` +
-        `<span class="type-badge" style="padding:6px 10px;border-radius:999px;background:rgba(13,8,24,0.45);border:1px solid rgba(123,85,212,0.18);">${escapeHtml(f.type)}</span>` +
-        `<span style="float:right;color:#a8b0d6">${new Date(f.createdAt).toLocaleString()}</span>` +
-        `</div>`;
+      feedbackDisplay.innerHTML = '';
+      
+      if (!feedbacks || feedbacks.length === 0) {
+        feedbackDisplay.innerHTML = `
+          <div class="state-box">
+            <div class="state-title">暂无已审核内容</div>
+            <div class="state-sub">已审核的反馈将显示在此</div>
+          </div>
+        `;
+        return;
+      }
 
-      li.innerHTML = `
-        <div class="card-header">${badge}</div>
-        <div class="card-content">${escapeHtml(f.message)}</div>
-        <div style="margin-top:10px;color:#a8b0d6;font-size:0.9rem">状态：<strong>${statusLabel}</strong></div>
-        ${f.reply ? `<div style="margin-top:8px;padding:10px;border-left:3px solid rgba(96,165,250,0.25);background:rgba(96,165,250,0.03);">回复：${escapeHtml(f.reply)}</div>` : ''}
+      feedbacks.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'submission-card';
+        
+        const statusMap = {
+          approved: '已审核',
+          transferred: '转接中',
+          replied: '已回复'
+        };
+        const statusLabel = statusMap[f.status] || f.status;
+        const statusClass = `status-${f.status}`;
+        
+        const createdDate = new Date(f.createdAt).toLocaleString('zh-CN');
+        
+        let replyHtml = '';
+        if (f.reply && f.reply.trim()) {
+          replyHtml = `
+            <div class="card-reply">
+              <div class="card-reply-title">💬 管理员回复：</div>
+              <div class="card-reply-content">${escapeHtml(f.reply)}</div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="card-type-badge type-${escapeHtml(f.type)}">${escapeHtml(f.type)}</span>
+            <span class="card-time">${createdDate}</span>
+          </div>
+          <div class="card-content">${escapeHtml(f.message)}</div>
+          <div class="card-status">
+            <span class="status-badge ${statusClass}">● ${statusLabel}</span>
+          </div>
+          ${replyHtml}
+        `;
+        feedbackDisplay.appendChild(card);
+      });
+    } catch (error) {
+      console.error('Error loading feedback:', error);
+      feedbackDisplay.innerHTML = `
+        <div class="state-box">
+          <div class="state-title">加载失败</div>
+          <div class="state-sub">请稍后重试</div>
+        </div>
       `;
-      feedbackDisplay.appendChild(li);
-    });
+    }
   }
 
   // Submit feedback (send JSON)
   feedbackForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const type = document.getElementById('category').value;
+    
+    const type = document.getElementById('category').value.trim();
     const message = document.getElementById('feedback-content').value.trim();
-    if (!message) return alert('请输入反馈内容');
+    
+    if (!type) {
+      showToast('请选择反馈类型', 'error');
+      return;
+    }
+    if (!message) {
+      showToast('请输入反馈内容', 'error');
+      return;
+    }
 
-    await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, message })
-    });
-    feedbackForm.reset();
-    loadFeedback();
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, message })
+      });
+
+      if (!response.ok) throw new Error('Failed to submit feedback');
+      
+      showToast('反馈提交成功，感谢您的建议！', 'success');
+      feedbackForm.reset();
+      loadFeedback();
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      showToast('提交失败，请稍后重试', 'error');
+    }
   });
 
-  // no front-end reply handling
+  // Show toast notification
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast show toast-${type}`;
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+  }
 
+  // Escape HTML to prevent XSS
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Load feedback on page load
   loadFeedback();
 });
-
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
