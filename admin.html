@@ -243,6 +243,13 @@
     .table-search-input { width:100%; }
     .data-table th:nth-child(1),.data-table td:nth-child(1) { display:none; }
   }
+
+  /* Modal (admin reply) */
+  .modal { position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(1,2,6,0.6);z-index:1200; }
+  .modal.hidden { display:none; }
+  .modal .modal-content { background:linear-gradient(135deg,rgba(29,14,58,0.95),rgba(13,8,24,0.95));padding:1.2rem;border-radius:10px;border:1px solid rgba(123,85,212,0.15);width:min(720px,96%);box-shadow:0 24px 80px rgba(0,0,0,0.6); }
+  .modal .modal-content textarea { width:100%; min-height:120px; padding:0.7rem;border-radius:8px;border:1px solid rgba(123,85,212,0.18);background:transparent;color:var(--p8); }
+  .modal .modal-actions { display:flex;gap:0.6rem;justify-content:flex-end;margin-top:0.8rem; }
 </style>
 </head>
 <body>
@@ -595,6 +602,21 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+  <!-- Admin reply modal -->
+  <div id="adminReplyModal" class="modal hidden">
+    <div class="modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-weight:700;color:var(--p8)">回复反馈</div>
+        <button onclick="closeReplyModal()" style="background:transparent;border:none;color:var(--p6);cursor:pointer;font-size:1.1rem">✕</button>
+      </div>
+      <textarea id="adminReplyContent" placeholder="请输入回复内容，最多1000字"></textarea>
+      <div class="modal-actions">
+        <button class="btn-clear" onclick="closeReplyModal()">取消</button>
+        <button class="btn-submit" id="adminReplySend">发送回复</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 // ── API Config ──
 // All data operations go through Vercel Serverless Functions → Neon PostgreSQL.
@@ -854,14 +876,13 @@ function renderFeedbackTable() {
 }
 
 async function handleFeedbackAction(id, action) {
-  let payload = { id, action };
+  // For reply, open modal to collect reply content
   if (action === 'reply') {
-    const reply = prompt('请输入回复内容:');
-    if (reply === null) return;
-    if (!reply.trim()) { showToast('回复内容不能为空', 'error'); return; }
-    payload.reply = reply.trim();
+    openReplyModal(id);
+    return;
   }
 
+  let payload = { id, action };
   try {
     await apiFeedbackUpdate(payload);
     showToast('操作已保存', 'success');
@@ -1381,6 +1402,36 @@ function showToast(msg, type='success') {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
 }
+
+// ── Admin reply modal handlers ──
+let currentReplyId = null;
+function openReplyModal(id) {
+  currentReplyId = id;
+  document.getElementById('adminReplyContent').value = '';
+  document.getElementById('adminReplyModal').classList.remove('hidden');
+  document.getElementById('adminReplyContent').focus();
+}
+
+function closeReplyModal() {
+  currentReplyId = null;
+  document.getElementById('adminReplyModal').classList.add('hidden');
+}
+
+document.getElementById('adminReplySend').addEventListener('click', async () => {
+  const area = document.getElementById('adminReplyContent');
+  const text = (area.value || '').trim();
+  if (!currentReplyId) return closeReplyModal();
+  if (!text) { showToast('回复内容不能为空', 'error'); return; }
+
+  try {
+    await apiFeedbackUpdate({ id: currentReplyId, action: 'reply', reply: text });
+    showToast('回复已发送', 'success');
+    closeReplyModal();
+    await loadFeedbackData();
+  } catch (e) {
+    showToast('发送失败：' + e.message, 'error');
+  }
+});
 </script>
 </body>
 </html>
