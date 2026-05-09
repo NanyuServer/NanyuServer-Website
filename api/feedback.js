@@ -51,10 +51,10 @@ module.exports = async (req, res) => {
     try {
       const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
 
-      // 只返回已审核的内容
-      const approvedFeedbacks = feedbacks.filter(f => f.status === 'approved' || f.status === 'replied');
+      // 返回已审核、转接中或已回复的内容
+      const visibleFeedbacks = feedbacks.filter(f => ['approved','replied','transferred'].includes(f.status));
 
-      res.status(200).json(approvedFeedbacks);
+      res.status(200).json(visibleFeedbacks);
     } catch (error) {
       console.error('Error reading feedback:', error);
       res.status(500).json({ error: '服务器错误' });
