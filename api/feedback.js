@@ -1,68 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-
-// 构建反馈文件路径
-const feedbackFile = path.join(__dirname, '../data/feedback.json');
-
-// 初始化文件路径和数据
-function ensureFeedbackFile() {
-  try {
-    const dataDir = path.join(__dirname, '../data');
-    
-    // 创建目录
-    if (!fs.existsSync(dataDir)) {
-      try {
-        fs.mkdirSync(dataDir, { recursive: true });
-        console.log('Created data directory:', dataDir);
-      } catch (dirError) {
-        console.error('Failed to create directory:', dirError);
-        throw dirError;
-      }
-    }
-    
-    // 创建文件
-    if (!fs.existsSync(feedbackFile)) {
-      try {
-        fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
-        console.log('Created feedback file:', feedbackFile);
-      } catch (fileError) {
-        console.error('Failed to create file:', fileError);
-        throw fileError;
-      }
-    }
-  } catch (error) {
-    console.error('Error ensuring feedback file at', feedbackFile, ':', error);
-    throw error;
-  }
-}
-
-// 安全读取反馈数据
-function readFeedbackData() {
-  try {
-    ensureFeedbackFile();
-    const data = fs.readFileSync(feedbackFile, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading feedback data:', error);
-    console.error('Feedback file path:', feedbackFile);
-    return [];
-  }
-}
-
-// 安全写入反馈数据
-function writeFeedbackData(data) {
-  try {
-    ensureFeedbackFile();
-    fs.writeFileSync(feedbackFile, JSON.stringify(data, null, 2));
-    return { success: true };
-  } catch (error) {
-    console.error('Error writing feedback data:', error);
-    console.error('Feedback file path:', feedbackFile);
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    return { success: false, error: error.message };
-  }
-}
+const storage = require('../lib/storage.js');
 
 module.exports = async (req, res) => {
   // 设置CORS头
@@ -95,7 +31,7 @@ module.exports = async (req, res) => {
       }
 
       // 读取现有反馈
-      const feedbacks = readFeedbackData();
+      const feedbacks = await storage.read();
 
       // 创建新反馈
       const newFeedback = {
@@ -110,8 +46,8 @@ module.exports = async (req, res) => {
 
       feedbacks.push(newFeedback);
 
-      // 保存到文件
-      const writeResult = writeFeedbackData(feedbacks);
+      // 保存反馈
+      const writeResult = await storage.write(feedbacks);
       if (!writeResult.success) {
         return res.status(500).json({ error: '保存失败: ' + writeResult.error });
       }
@@ -123,7 +59,7 @@ module.exports = async (req, res) => {
     }
   } else if (req.method === 'GET') {
     try {
-      const feedbacks = readFeedbackData();
+      const feedbacks = await storage.read();
 
       // 返回已审核、转接中或已回复的内容
       const visibleFeedbacks = feedbacks.filter(f => ['approved','replied','transferred'].includes(f.status));
@@ -138,13 +74,23 @@ module.exports = async (req, res) => {
     }
   } else if (req.method === 'PATCH') {
     try {
-      const { id, status, reply } = req.body;
+      let bodyData;
+      
+      if (typeof req.body === 'string') {
+        bodyData = JSON.parse(req.body);
+      } else if (typeof req.body === 'object') {
+        bodyData = req.body;
+      } else {
+        return res.status(400).json({ error: '无效的请求体' });
+      }
+
+      const { id, status, reply } = bodyData;
       
       if (!id) {
         return res.status(400).json({ error: 'ID不能为空' });
       }
 
-      const feedbacks = readFeedbackData();
+      const feedbacks = await storage.read();
       const feedback = feedbacks.find(f => f.id === id);
 
       if (!feedback) {
@@ -160,8 +106,8 @@ module.exports = async (req, res) => {
       }
       feedback.updatedAt = new Date().toISOString();
 
-      // 保存到文件
-      const writeResult = writeFeedbackData(feedbacks);
+      // 保存反馈
+      const writeResult = await storage.write(feedbacks);
       if (!writeResult.success) {
         return res.status(500).json({ error: '保存失败: ' + writeResult.error });
       }
@@ -173,16 +119,26 @@ module.exports = async (req, res) => {
     }
   } else if (req.method === 'DELETE') {
     try {
-      const { id } = req.body;
+      let bodyData;
+      
+      if (typeof req.body === 'string') {
+        bodyData = JSON.parse(req.body);
+      } else if (typeof req.body === 'object') {
+        bodyData = req.body;
+      } else {
+        return res.status(400).json({ error: '无效的请求体' });
+      }
+
+      const { id } = bodyData;
       
       if (!id) {
         return res.status(400).json({ error: 'ID不能为空' });
       }
 
-      let feedbacks = readFeedbackData();
+      let feedbacks = await storage.read();
       feedbacks = feedbacks.filter(f => f.id !== id);
 
-      const writeResult = writeFeedbackData(feedbacks);
+      const writeResult = await storage.write(feedbacks);
       if (!writeResult.success) {
         return res.status(500).json({ error: '保存失败: ' + writeResult.error });
       }
