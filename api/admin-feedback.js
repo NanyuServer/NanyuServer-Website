@@ -3,15 +3,43 @@ const path = require('path');
 
 const feedbackFile = path.join(__dirname, '../data/feedback.json');
 
-// 确保数据目录存在
-const dataDir = path.join(__dirname, '../data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// 初始化文件路径和数据
+function ensureFeedbackFile() {
+  try {
+    const dataDir = path.join(__dirname, '../data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    if (!fs.existsSync(feedbackFile)) {
+      fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
+    }
+  } catch (error) {
+    console.error('Error ensuring feedback file:', error);
+  }
 }
 
-// 初始化反馈数据文件
-if (!fs.existsSync(feedbackFile)) {
-  fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
+// 安全读取反馈数据
+function readFeedbackData() {
+  try {
+    ensureFeedbackFile();
+    const data = fs.readFileSync(feedbackFile, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading feedback data:', error);
+    return [];
+  }
+}
+
+// 安全写入反馈数据
+function writeFeedbackData(data) {
+  try {
+    ensureFeedbackFile();
+    fs.writeFileSync(feedbackFile, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing feedback data:', error);
+    return false;
+  }
 }
 
 module.exports = async (req, res) => {
@@ -19,6 +47,7 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-admin-secret');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -30,11 +59,11 @@ module.exports = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
+      const feedbacks = readFeedbackData();
       res.status(200).json(feedbacks);
     } catch (error) {
       console.error('Error reading feedback:', error);
-      res.status(500).json({ error: '服务器错误' });
+      res.status(500).json({ error: '服务器错误: ' + error.message });
     }
   } else if (req.method === 'PUT') {
     try {
@@ -44,7 +73,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'ID不能为空' });
       }
 
-      const feedbacks = JSON.parse(fs.readFileSync(feedbackFile, 'utf8'));
+      const feedbacks = readFeedbackData();
       const feedbackIndex = feedbacks.findIndex(f => f.id === id);
 
       if (feedbackIndex === -1) {
@@ -87,12 +116,14 @@ module.exports = async (req, res) => {
 
       feedback.updatedAt = new Date().toISOString();
 
-      fs.writeFileSync(feedbackFile, JSON.stringify(feedbacks, null, 2));
+      if (!writeFeedbackData(feedbacks)) {
+        return res.status(500).json({ error: '保存失败' });
+      }
 
       res.status(200).json({ success: true, feedback });
     } catch (error) {
       console.error('Error updating feedback:', error);
-      res.status(500).json({ error: '服务器错误' });
+      res.status(500).json({ error: '服务器错误: ' + error.message });
     }
   } else {
     res.status(405).json({ error: '方法不允许' });
