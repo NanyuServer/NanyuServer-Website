@@ -7,14 +7,31 @@ const feedbackFile = path.join(__dirname, '../data/feedback.json');
 function ensureFeedbackFile() {
   try {
     const dataDir = path.join(__dirname, '../data');
+    
+    // 创建目录
     if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+      try {
+        fs.mkdirSync(dataDir, { recursive: true });
+        console.log('Created data directory:', dataDir);
+      } catch (dirError) {
+        console.error('Failed to create directory:', dirError);
+        throw dirError;
+      }
     }
+    
+    // 创建文件
     if (!fs.existsSync(feedbackFile)) {
-      fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
+      try {
+        fs.writeFileSync(feedbackFile, JSON.stringify([], null, 2));
+        console.log('Created feedback file:', feedbackFile);
+      } catch (fileError) {
+        console.error('Failed to create file:', fileError);
+        throw fileError;
+      }
     }
   } catch (error) {
-    console.error('Error ensuring feedback file:', error);
+    console.error('Error ensuring feedback file at', feedbackFile, ':', error);
+    throw error;
   }
 }
 
@@ -26,6 +43,7 @@ function readFeedbackData() {
     return JSON.parse(data);
   } catch (error) {
     console.error('Error reading feedback data:', error);
+    console.error('Feedback file path:', feedbackFile);
     return [];
   }
 }
@@ -35,10 +53,13 @@ function writeFeedbackData(data) {
   try {
     ensureFeedbackFile();
     fs.writeFileSync(feedbackFile, JSON.stringify(data, null, 2));
-    return true;
+    return { success: true };
   } catch (error) {
     console.error('Error writing feedback data:', error);
-    return false;
+    console.error('Feedback file path:', feedbackFile);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    return { success: false, error: error.message };
   }
 }
 
@@ -67,7 +88,18 @@ module.exports = async (req, res) => {
     }
   } else if (req.method === 'PUT') {
     try {
-      const { id, action, status, reply } = req.body;
+      let bodyData;
+      
+      // 解析请求体
+      if (typeof req.body === 'string') {
+        bodyData = JSON.parse(req.body);
+      } else if (typeof req.body === 'object') {
+        bodyData = req.body;
+      } else {
+        return res.status(400).json({ error: '无效的请求体' });
+      }
+
+      const { id, action, status, reply } = bodyData;
 
       if (!id) {
         return res.status(400).json({ error: 'ID不能为空' });
@@ -116,8 +148,9 @@ module.exports = async (req, res) => {
 
       feedback.updatedAt = new Date().toISOString();
 
-      if (!writeFeedbackData(feedbacks)) {
-        return res.status(500).json({ error: '保存失败' });
+      const writeResult = writeFeedbackData(feedbacks);
+      if (!writeResult.success) {
+        return res.status(500).json({ error: '保存失败: ' + writeResult.error });
       }
 
       res.status(200).json({ success: true, feedback });
