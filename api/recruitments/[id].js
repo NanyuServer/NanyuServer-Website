@@ -36,7 +36,9 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'PATCH') {
-    const { title, description, tags, apply_url } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
+    const { title, description, tags, apply_url } = body || {};
     if (!title && !description && !tags && !apply_url) {
       return res.status(400).json({ error: '必须提供要更新的字段' });
     }

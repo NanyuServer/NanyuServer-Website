@@ -43,7 +43,9 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { name, qq, position_id, position_title, note = '' } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
+    const { name, qq, position_id, position_title, note = '' } = body || {};
     if (!name || !qq || !position_id || !position_title) {
       return res.status(400).json({ error: '缺少必填字段：name、qq、position_id、position_title' });
     }
