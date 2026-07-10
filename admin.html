@@ -163,9 +163,22 @@
     var saved = localStorage.getItem('recruitAdminToken');
     if (saved) {
       adminToken = saved;
-      $('loginPage').style.display = 'none';
-      $('adminPage').style.display = 'block';
-      loadAll();
+      fetch(API_BASE + '/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-action': 'verify', 'x-admin-secret': saved }
+      }).then(function(res) {
+        if (res.ok) {
+          $('loginPage').style.display = 'none';
+          $('adminPage').style.display = 'block';
+          loadAll();
+        } else {
+          localStorage.removeItem('recruitAdminToken');
+          adminToken = '';
+        }
+      }).catch(function() {
+        localStorage.removeItem('recruitAdminToken');
+        adminToken = '';
+      });
     }
   }
 
@@ -175,11 +188,35 @@
       $('loginError').textContent = '手机号不正确';
       return;
     }
-    adminToken = 'recruit-admin-' + phone;
-    localStorage.setItem('recruitAdminToken', adminToken);
-    $('loginPage').style.display = 'none';
-    $('adminPage').style.display = 'block';
-    loadAll();
+    $('loginBtn').disabled = true;
+    $('loginBtn').textContent = '登录中…';
+    $('loginError').textContent = '';
+
+    fetch(API_BASE + '/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-action': 'login' },
+      body: JSON.stringify({ username: 'admin', password: 'nywll2026' })
+    }).then(function(res) {
+      return res.json().then(function(json) {
+        if (!res.ok) throw new Error(json.error || '认证失败');
+        return json;
+      });
+    }).then(function(data) {
+      if (data.token) {
+        adminToken = data.token;
+        localStorage.setItem('recruitAdminToken', adminToken);
+        $('loginPage').style.display = 'none';
+        $('adminPage').style.display = 'block';
+        loadAll();
+      } else {
+        throw new Error('未获取到令牌');
+      }
+    }).catch(function(e) {
+      $('loginError').textContent = e.message || '登录失败';
+    }).finally(function() {
+      $('loginBtn').disabled = false;
+      $('loginBtn').textContent = '登录';
+    });
   });
 
   $('phoneInput').addEventListener('keydown', function(e) {

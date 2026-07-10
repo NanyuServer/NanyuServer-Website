@@ -7,6 +7,10 @@ async function validateAdminSecret(adminSecret) {
     return true;
   }
 
+  if (process.env.RECRUIT_ADMIN_TOKEN && adminSecret === process.env.RECRUIT_ADMIN_TOKEN) {
+    return true;
+  }
+
   if (!process.env.DATABASE_URL) {
     return false;
   }

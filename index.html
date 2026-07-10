@@ -89,17 +89,52 @@
     .page-hero-content { position: relative; z-index: 2; }
     .page-title {
       font-family: var(--font-title);
-      font-size: clamp(2rem, 6vw, 3rem);
+      font-size: clamp(1.4rem, 4vw, 2rem);
       font-weight: 700;
       letter-spacing: 0.04em;
       color: #fff;
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
     }
     .page-sub {
       font-family: var(--font-body);
       color: var(--accent-light);
       font-size: 0.9rem;
       letter-spacing: 0.04em;
+    }
+    .tr-wrap {
+      display: inline-flex;
+      overflow: hidden;
+      padding: 0.15em 0.3em;
+      background: var(--purple);
+      border-radius: 0.3em;
+      vertical-align: bottom;
+    }
+    .tr-inner {
+      display: inline-flex;
+      flex-direction: column;
+      position: relative;
+      height: 1.2em;
+      line-height: 1.2em;
+      vertical-align: bottom;
+    }
+    .tr-char {
+      display: inline-block;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s;
+    }
+    .tr-char.entering { animation: trEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .tr-char.exiting { animation: trExit 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes trEnter {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes trExit {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-120%); opacity: 0; }
     }
 
     .content-section {
@@ -190,7 +225,7 @@
       color: #fff;
     }
     .step-content-area {
-      padding: 0 2rem 2rem;
+      padding: 0 2rem 0;
     }
     .step-title {
       font-family: var(--font-title);
@@ -206,6 +241,46 @@
       line-height: 1.7;
       opacity: 0.85;
     }
+    .step-footer {
+      padding: 2rem;
+    }
+    .step-nav {
+      margin-top: 2.5rem;
+      display: flex;
+    }
+    .step-nav.spread { justify-content: space-between; }
+    .step-nav.end { justify-content: flex-end; }
+    .step-back {
+      transition: all 350ms;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      color: #a3a3a3;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+    }
+    .step-back:hover { color: #52525b; }
+    .step-back.inactive { pointer-events: none; opacity: 0.5; color: #a3a3a3; }
+    .step-next {
+      transition: all 350ms;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      background-color: var(--purple);
+      color: #fff;
+      font-weight: 500;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      letter-spacing: -0.025em;
+      padding: 0.375rem 0.875rem;
+      border: none;
+      cursor: pointer;
+    }
+    .step-next:hover { opacity: 0.9; }
+    .step-next:active { transform: scale(0.97); }
 
     .section-heading {
       font-family: var(--font-title);
@@ -312,7 +387,7 @@
 <div class="page-hero">
   <div class="page-orb"></div>
   <div class="page-hero-content">
-    <h1 class="page-title">招贤纳士</h1>
+    <h1 class="page-title">欢迎加入 <span class="tr-wrap" id="rotatingText"></span></h1>
     <p class="page-sub">加入南渝万能墙运营团队</p>
   </div>
 </div>
@@ -337,6 +412,12 @@
       <div id="stepContent">
         <div class="step-title" id="stepTitle">感谢选择南渝万能墙</div>
         <div class="step-desc" id="stepDesc">我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！</div>
+      </div>
+    </div>
+    <div class="step-footer">
+      <div class="step-nav" id="stepNav">
+        <button class="step-back inactive" id="stepBackBtn" type="button" style="display:none;">Back</button>
+        <button class="step-next" id="stepNextBtn" type="button">下一步</button>
       </div>
     </div>
   </div>
@@ -408,6 +489,9 @@
   var selectedPositionId = '';
   var selectedGrade = '';
   var selectedContactType = 'QQ';
+  var currentStep = 0;
+
+  var ROTATING_TEXTS = ['南渝万能墙', '北关鱼的驿站', 'BEIGUANYU驿站'];
 
   var STEPS = [
     { title: '感谢选择南渝万能墙', desc: '我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！' },
@@ -434,21 +518,43 @@
     toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
   }
 
-  function updateStepper() {
-    var step = 0;
-    if (selectedPositionId) step = 1;
-    if (document.getElementById('formName').value.trim() && selectedGrade && selectedPositionId && document.getElementById('formContact').value.trim()) step = 2;
+  /* ── RotatingText (ReactBits clone) ── */
+  var rtContainer = document.getElementById('rotatingText');
+  var rtIndex = 0;
+  var rtInterval = 2000;
 
+  function renderRotatingText(text, direction) {
+    var chars = Array.from(text);
+    var html = '<div style="display:inline-flex;position:relative;height:1.2em;overflow:hidden;vertical-align:bottom;">';
+    chars.forEach(function(ch, i) {
+      var delay = (direction === 'next' ? i : chars.length - 1 - i) * 0.025;
+      var animClass = direction === 'next' ? 'entering' : 'exiting';
+      html += '<span class="tr-char ' + animClass + '" style="animation-delay:' + delay + 's;display:inline-block;">' + ch + '</span>';
+    });
+    html += '</div>';
+    rtContainer.innerHTML = html;
+  }
+
+  function rotateNext() {
+    rtIndex = (rtIndex + 1) % ROTATING_TEXTS.length;
+    renderRotatingText(ROTATING_TEXTS[rtIndex], 'next');
+  }
+
+  renderRotatingText(ROTATING_TEXTS[0], 'next');
+  setInterval(rotateNext, rtInterval);
+
+  /* ── Stepper ── */
+  function updateStepper() {
     var dots = ['dot1', 'dot2', 'dot3'];
     var conns = ['conn1', 'conn2'];
 
     dots.forEach(function(id, i) {
       var el = document.getElementById(id);
       el.classList.remove('inactive', 'active', 'complete');
-      if (i < step) {
+      if (i < currentStep) {
         el.classList.add('complete');
         el.innerHTML = '<svg class="check-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
-      } else if (i === step) {
+      } else if (i === currentStep) {
         el.classList.add('active');
         el.innerHTML = '<div class="active-dot"></div>';
       } else {
@@ -458,14 +564,34 @@
     });
 
     conns.forEach(function(id, i) {
-      var el = document.getElementById(id);
-      el.classList.toggle('complete', i < step);
+      document.getElementById(id).classList.toggle('complete', i < currentStep);
     });
 
-    var data = STEPS[Math.min(step, 2)];
+    var data = STEPS[currentStep];
     document.getElementById('stepTitle').textContent = data.title;
     document.getElementById('stepDesc').textContent = data.desc;
+
+    var nav = document.getElementById('stepNav');
+    var backBtn = document.getElementById('stepBackBtn');
+    var nextBtn = document.getElementById('stepNextBtn');
+    if (currentStep === 0) {
+      nav.className = 'step-nav end';
+      backBtn.style.display = 'none';
+    } else {
+      nav.className = 'step-nav spread';
+      backBtn.style.display = '';
+    }
+    nextBtn.textContent = currentStep === 2 ? '完成' : '下一步';
   }
+
+  document.getElementById('stepNextBtn').addEventListener('click', function() {
+    if (currentStep < 2) { currentStep++; updateStepper(); }
+    else { currentStep = 0; updateStepper(); }
+  });
+
+  document.getElementById('stepBackBtn').addEventListener('click', function() {
+    if (currentStep > 0) { currentStep--; updateStepper(); }
+  });
 
   function renderPositions() {
     var grid = document.getElementById('positionsGrid');
@@ -496,7 +622,6 @@
         grid.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.toggle('selected', c.getAttribute('data-id') === id); });
         posGroup.querySelectorAll('.radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === id); });
         showToast('已选择：' + pos.title);
-        updateStepper();
       });
     });
 
@@ -506,7 +631,6 @@
         selectedPositionId = val;
         posGroup.querySelectorAll('.radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === val); });
         grid.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.toggle('selected', c.getAttribute('data-id') === val); });
-        updateStepper();
       });
     });
   }
@@ -515,7 +639,6 @@
     opt.addEventListener('click', function() {
       selectedGrade = this.getAttribute('data-value');
       document.querySelectorAll('#gradeGroup .radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === selectedGrade); });
-      updateStepper();
     });
   });
 
@@ -524,10 +647,6 @@
       selectedContactType = this.getAttribute('data-type');
       document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(b) { b.classList.toggle('selected', b.getAttribute('data-type') === selectedContactType); });
     });
-  });
-
-  ['formName', 'formContact', 'formSkills'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', updateStepper);
   });
 
   document.getElementById('submitBtn').addEventListener('click', function() {
@@ -565,7 +684,6 @@
       document.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.remove('selected'); });
       showToast('报名提交成功，我们会尽快与你联系');
       setFormMsg('提交成功', '#a0f0c0');
-      updateStepper();
     }).catch(function(e) {
       setFormMsg('提交失败：' + (e.message || '请稍后重试'), '#ffb3b3');
     }).finally(function() {
@@ -577,7 +695,6 @@
   request('/recruitments').then(function(json) {
     positions = Array.isArray(json.data) ? json.data : [];
     renderPositions();
-    updateStepper();
   }).catch(function() {
     document.getElementById('positionsGrid').innerHTML = '<div class="empty-card">加载失败，请刷新重试</div>';
   });
