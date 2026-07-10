@@ -12,6 +12,7 @@
       --accent-light: #B388FF;
       --accent-gold: #e8c97a;
       --accent-rose: #e86fa3;
+      --purple: #5227FF;
       --text-primary: #FFFFFF;
       --text-secondary: #E0D7FF;
       --text-muted: #9E8BBF;
@@ -32,7 +33,6 @@
       color: var(--text-primary);
       line-height: 1.65;
       overflow-x: hidden;
-      min-height: 100vh;
     }
     body::before {
       content: '';
@@ -92,10 +92,7 @@
       font-size: clamp(2rem, 6vw, 3rem);
       font-weight: 700;
       letter-spacing: 0.04em;
-      background: linear-gradient(135deg, var(--accent-gold), var(--text-secondary), var(--accent-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #fff;
       margin-bottom: 0.5rem;
     }
     .page-sub {
@@ -108,83 +105,101 @@
     .content-section {
       max-width: 640px;
       margin: 0 auto;
-      padding: 1.5rem 1.25rem 4rem;
+      padding: 1.5rem 1.25rem 2rem;
       position: relative;
       z-index: 1;
     }
 
-    .stepper {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+    /* ── ReactBits Stepper (exact clone) ── */
+    .stepper-container {
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      max-width: 28rem;
+      border-radius: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      border: 1px solid #222;
+      background: var(--bg-primary);
+      overflow: hidden;
       margin-bottom: 2rem;
     }
-    .stepper-item {
+    .step-indicator-row {
       display: flex;
-      gap: 1rem;
-      position: relative;
-    }
-    .stepper-left {
-      display: flex;
-      flex-direction: column;
+      width: 100%;
       align-items: center;
-      flex-shrink: 0;
-      width: 32px;
+      padding: 2rem;
     }
-    .stepper-dot {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    .step-indicator {
+      position: relative;
+      cursor: default;
+      outline: none;
+    }
+    .step-indicator-inner {
       display: flex;
+      height: 2rem;
+      width: 2rem;
       align-items: center;
       justify-content: center;
-      font-family: var(--font-ui);
-      font-size: 0.75rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      transition: all 0.3s;
+      border-radius: 9999px;
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s;
     }
-    .stepper-dot.active {
-      background: linear-gradient(135deg, rgba(75, 47, 163, 0.8), rgba(168, 127, 232, 0.6));
-      color: white;
-      border: 2px solid var(--accent-light);
-      box-shadow: 0 0 12px rgba(179, 136, 255, 0.4);
+    .step-indicator-inner.inactive {
+      background-color: #222;
+      color: #a3a3a3;
     }
-    .stepper-dot.done {
-      background: rgba(52, 211, 153, 0.2);
-      color: #34d399;
-      border: 2px solid rgba(52, 211, 153, 0.5);
+    .step-indicator-inner.active {
+      background-color: var(--purple);
+      color: var(--purple);
     }
-    .stepper-dot.inactive {
-      background: rgba(15, 10, 26, 0.6);
-      color: var(--text-muted);
-      border: 2px solid rgba(123, 85, 212, 0.2);
+    .step-indicator-inner.complete {
+      background-color: var(--purple);
+      color: #3b82f6;
     }
-    .stepper-line {
-      width: 2px;
+    .active-dot {
+      height: 0.75rem;
+      width: 0.75rem;
+      border-radius: 9999px;
+      background-color: #fff;
+    }
+    .step-number { font-size: 0.875rem; }
+    .step-connector {
+      position: relative;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      height: 0.125rem;
       flex: 1;
-      min-height: 20px;
-      margin: 4px 0;
-      transition: background 0.3s;
+      overflow: hidden;
+      border-radius: 0.25rem;
+      background-color: #52525b;
     }
-    .stepper-line.done {
-      background: rgba(52, 211, 153, 0.4);
+    .step-connector-inner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background-color: var(--purple);
+      transition: width 0.4s;
+      border-radius: 0.25rem;
     }
-    .stepper-line.inactive {
-      background: rgba(123, 85, 212, 0.15);
+    .step-connector-inner.complete { width: 100%; }
+    .check-icon {
+      height: 1rem;
+      width: 1rem;
+      color: #fff;
     }
-    .stepper-body {
-      padding-bottom: 1.5rem;
+    .step-content-area {
+      padding: 0 2rem 2rem;
     }
-    .stepper-title {
+    .step-title {
       font-family: var(--font-title);
-      font-size: 0.95rem;
-      font-weight: 700;
+      font-size: 1.05rem;
+      font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 0.3rem;
-      line-height: 32px;
+      margin-bottom: 0.4rem;
     }
-    .stepper-desc {
+    .step-desc {
       font-family: var(--font-body);
       font-size: 0.82rem;
       color: var(--text-secondary);
@@ -206,7 +221,7 @@
       margin-bottom: 2rem;
     }
     .position-tag-card {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 0.5rem;
       padding: 0.8rem 1.2rem;
@@ -217,49 +232,13 @@
       transition: all 0.3s var(--ease-out);
       width: 100%;
     }
-    .position-tag-card:hover {
-      border-color: var(--accent-light);
-      background: rgba(75, 47, 163, 0.15);
-    }
-    .position-tag-card.selected {
-      border-color: rgba(52, 211, 153, 0.6);
-      background: rgba(52, 211, 153, 0.08);
-      box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.2);
-    }
-    .position-tag-card .pos-name {
-      font-family: var(--font-ui);
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .position-tag-card .pos-check {
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid rgba(123, 85, 212, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.25s;
-      flex-shrink: 0;
-    }
-    .position-tag-card.selected .pos-check {
-      border-color: #34d399;
-      background: #34d399;
-    }
-    .position-tag-card.selected .pos-check::after {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: white;
-    }
-    .position-tag-card .pos-desc {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
-    }
+    .position-tag-card:hover { border-color: var(--accent-light); background: rgba(75, 47, 163, 0.15); }
+    .position-tag-card.selected { border-color: rgba(52, 211, 153, 0.6); background: rgba(52, 211, 153, 0.08); }
+    .position-tag-card .pos-name { font-family: var(--font-ui); font-size: 0.88rem; font-weight: 600; color: var(--text-primary); flex: 1; min-width: 0; }
+    .position-tag-card .pos-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(123, 85, 212, 0.3); display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
+    .position-tag-card.selected .pos-check { border-color: #34d399; background: #34d399; }
+    .position-tag-card.selected .pos-check::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: white; }
+    .position-tag-card .pos-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
 
     .form-card {
       padding: 1.5rem;
@@ -268,58 +247,19 @@
       border-radius: var(--radius-lg);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
     }
-    .form-card-title {
-      font-family: var(--font-title);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-      margin-bottom: 1.5rem;
-    }
-
-    .form-question {
-      margin-bottom: 1.5rem;
-    }
-    .form-question:last-of-type {
-      margin-bottom: 0;
-    }
-    .form-q-label {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-family: var(--font-ui);
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.6rem;
-    }
-    .form-q-label .q-num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      background: rgba(75, 47, 163, 0.4);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--accent-light);
-      flex-shrink: 0;
-    }
-    .form-q-label .q-required {
-      color: var(--accent-rose);
-      font-size: 0.8rem;
-    }
-    .form-q-label .q-optional {
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      font-weight: 400;
-    }
+    .form-card-title { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 1.5rem; }
+    .form-question { margin-bottom: 1.5rem; }
+    .form-question:last-of-type { margin-bottom: 0; }
+    .form-q-label { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-ui); font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.6rem; }
+    .form-q-label .q-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: rgba(75, 47, 163, 0.4); font-size: 0.72rem; font-weight: 700; color: var(--accent-light); flex-shrink: 0; }
+    .form-q-label .q-required { color: var(--accent-rose); font-size: 0.8rem; }
+    .form-q-label .q-optional { color: var(--text-muted); font-size: 0.72rem; font-weight: 400; }
 
     .glass-input {
       width: 100%;
       font-family: var(--font-ui);
       font-size: 0.88rem;
-      color: var(--text-primary) !important;
+      color: var(--text-primary);
       background: rgba(15, 10, 26, 0.6);
       border: 1px solid rgba(123, 85, 212, 0.3);
       border-radius: var(--radius-sm);
@@ -328,220 +268,49 @@
       transition: border-color 0.3s, box-shadow 0.3s;
       -webkit-appearance: none;
     }
-    .glass-input:focus {
-      border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px rgba(179, 136, 255, 0.15);
-    }
-    .glass-input::placeholder {
-      color: var(--text-muted);
-      opacity: 0.6;
-    }
+    .glass-input:focus { border-color: var(--accent-light); box-shadow: 0 0 0 3px rgba(179, 136, 255, 0.15); }
+    .glass-input::placeholder { color: var(--text-muted); opacity: 0.6; }
 
-    .radio-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .radio-option {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.65rem 0.9rem;
-      background: rgba(15, 10, 26, 0.5);
-      border: 1px solid rgba(123, 85, 212, 0.2);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.25s;
-      user-select: none;
-    }
-    .radio-option:hover {
-      border-color: rgba(123, 85, 212, 0.4);
-      background: rgba(75, 47, 163, 0.1);
-    }
-    .radio-option.selected {
-      border-color: var(--accent-light);
-      background: rgba(75, 47, 163, 0.2);
-    }
-    .radio-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(123, 85, 212, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.25s;
-    }
-    .radio-option.selected .radio-dot {
-      border-color: var(--accent-light);
-      background: var(--accent-light);
-    }
-    .radio-option.selected .radio-dot::after {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: white;
-    }
-    .radio-label {
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      transition: color 0.25s;
-    }
-    .radio-option.selected .radio-label {
-      color: var(--text-primary);
-    }
+    .radio-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .radio-option { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.9rem; background: rgba(15, 10, 26, 0.5); border: 1px solid rgba(123, 85, 212, 0.2); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.25s; user-select: none; }
+    .radio-option:hover { border-color: rgba(123, 85, 212, 0.4); background: rgba(75, 47, 163, 0.1); }
+    .radio-option.selected { border-color: var(--accent-light); background: rgba(75, 47, 163, 0.2); }
+    .radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(123, 85, 212, 0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.25s; }
+    .radio-option.selected .radio-dot { border-color: var(--accent-light); background: var(--accent-light); }
+    .radio-option.selected .radio-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: white; }
+    .radio-label { font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-secondary); transition: color 0.25s; }
+    .radio-option.selected .radio-label { color: var(--text-primary); }
 
-    .contact-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .contact-type-group {
-      display: flex;
-      gap: 0;
-      flex-shrink: 0;
-      border: 1px solid rgba(123, 85, 212, 0.3);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .contact-type-btn {
-      padding: 0.7rem 0.8rem;
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      background: rgba(15, 10, 26, 0.5);
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s;
-      white-space: nowrap;
-      border-right: 1px solid rgba(123, 85, 212, 0.15);
-    }
-    .contact-type-btn:last-child {
-      border-right: none;
-    }
-    .contact-type-btn.selected {
-      background: rgba(75, 47, 163, 0.5);
-      color: white;
-    }
-    .contact-input {
-      flex: 1;
-      min-width: 0;
-    }
-    .contact-input .glass-input {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
+    .contact-row { display: flex; gap: 0.5rem; }
+    .contact-type-group { display: flex; flex-shrink: 0; border: 1px solid rgba(123, 85, 212, 0.3); border-radius: var(--radius-sm); overflow: hidden; }
+    .contact-type-btn { padding: 0.7rem 0.8rem; font-family: var(--font-ui); font-size: 0.8rem; color: var(--text-muted); background: rgba(15, 10, 26, 0.5); border: none; cursor: pointer; transition: all 0.25s; white-space: nowrap; border-right: 1px solid rgba(123, 85, 212, 0.15); }
+    .contact-type-btn:last-child { border-right: none; }
+    .contact-type-btn.selected { background: rgba(75, 47, 163, 0.5); color: white; }
+    .contact-input { flex: 1; min-width: 0; }
+    .contact-input .glass-input { border-top-left-radius: 0; border-bottom-left-radius: 0; }
 
-    .form-divider {
-      height: 1px;
-      background: rgba(123, 85, 212, 0.12);
-      margin: 1.5rem 0;
-    }
+    .form-divider { height: 1px; background: rgba(123, 85, 212, 0.12); margin: 1.5rem 0; }
 
-    .form-actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 1.5rem;
-    }
-    .submit-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-family: var(--font-ui);
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 0.85rem 0;
-      width: 100%;
-      border: 1px solid rgba(179, 136, 255, 0.3);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      background: linear-gradient(135deg, rgba(75, 47, 163, 0.6), rgba(100, 60, 180, 0.5));
-      color: white;
-      transition: all 0.3s var(--ease-out);
-    }
-    .submit-btn:hover {
-      background: linear-gradient(135deg, rgba(75, 47, 163, 0.8), rgba(100, 60, 180, 0.7));
-    }
-    .submit-btn:active {
-      transform: scale(0.98);
-    }
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .form-note {
-      text-align: center;
-      margin-top: 0.8rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
+    .form-actions { display: flex; justify-content: center; margin-top: 1.5rem; }
+    .submit-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-family: var(--font-ui); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; padding: 0.85rem 0; width: 100%; border: 1px solid rgba(179, 136, 255, 0.3); border-radius: var(--radius-sm); cursor: pointer; background: linear-gradient(135deg, rgba(75, 47, 163, 0.6), rgba(100, 60, 180, 0.5)); color: white; transition: all 0.3s var(--ease-out); }
+    .submit-btn:hover { background: linear-gradient(135deg, rgba(75, 47, 163, 0.8), rgba(100, 60, 180, 0.7)); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .form-note { text-align: center; margin-top: 0.8rem; font-size: 0.78rem; color: var(--text-muted); }
 
-    .empty-card {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 80px;
-      padding: 1.5rem;
-      color: var(--text-muted);
-      border: 1px dashed rgba(123, 85, 212, 0.3);
-      background: rgba(15, 10, 26, 0.4);
-      border-radius: var(--radius-lg);
-      font-size: 0.88rem;
-    }
+    .empty-card { display: flex; align-items: center; justify-content: center; min-height: 80px; padding: 1.5rem; color: var(--text-muted); border: 1px dashed rgba(123, 85, 212, 0.3); background: rgba(15, 10, 26, 0.4); border-radius: var(--radius-lg); font-size: 0.88rem; }
 
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 1.25rem;
-      left: 1.25rem;
-      max-width: 360px;
-      margin: 0 auto;
-      padding: 0.8rem 1.2rem;
-      background: rgba(20, 12, 40, 0.97);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(179, 136, 255, 0.3);
-      border-radius: var(--radius-md);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      font-family: var(--font-ui);
-      font-size: 0.82rem;
-      color: var(--text-primary);
-      z-index: 30000;
-      transform: translateY(120%);
-      opacity: 0;
-      transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
-      pointer-events: none;
-    }
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    .toast { position: fixed; bottom: 2rem; right: 1.25rem; left: 1.25rem; max-width: 360px; margin: 0 auto; padding: 0.8rem 1.2rem; background: rgba(20, 12, 40, 0.97); backdrop-filter: blur(20px); border: 1px solid rgba(179, 136, 255, 0.3); border-radius: var(--radius-md); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); font-family: var(--font-ui); font-size: 0.82rem; color: var(--text-primary); z-index: 30000; transform: translateY(120%); opacity: 0; transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out); pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
 
-    .app-footer {
-      padding: 1.5rem;
-      text-align: center;
-      border-top: 1px solid rgba(75, 47, 163, 0.15);
-    }
-    .footer-copy {
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      opacity: 0.5;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: none; }
-    }
+    .app-footer { padding: 1.5rem; text-align: center; border-top: 1px solid rgba(75, 47, 163, 0.15); margin-top: 2rem; }
+    .footer-copy { font-family: var(--font-body); font-size: 0.7rem; color: var(--text-muted); opacity: 0.5; }
   </style>
 </head>
 <body>
 
 <div class="page-hero">
-  <div class="page-orb" />
+  <div class="page-orb"></div>
   <div class="page-hero-content">
     <h1 class="page-title">招贤纳士</h1>
     <p class="page-sub">加入南渝万能墙运营团队</p>
@@ -550,34 +319,24 @@
 
 <div class="content-section">
 
-  <div class="stepper">
-    <div class="stepper-item">
-      <div class="stepper-left">
-        <div class="stepper-dot active">1</div>
-        <div class="stepper-line inactive"></div>
+  <div class="stepper-container" id="stepper">
+    <div class="step-indicator-row">
+      <div class="step-indicator">
+        <div class="step-indicator-inner active" id="dot1"><div class="active-dot"></div></div>
       </div>
-      <div class="stepper-body">
-        <div class="stepper-title">感谢选择南渝万能墙</div>
-        <div class="stepper-desc">我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！</div>
+      <div class="step-connector"><div class="step-connector-inner" id="conn1"></div></div>
+      <div class="step-indicator">
+        <div class="step-indicator-inner inactive" id="dot2"><span class="step-number">2</span></div>
       </div>
-    </div>
-    <div class="stepper-item">
-      <div class="stepper-left">
-        <div class="stepper-dot inactive">2</div>
-        <div class="stepper-line inactive"></div>
-      </div>
-      <div class="stepper-body">
-        <div class="stepper-title">选择你的意向岗位</div>
-        <div class="stepper-desc">你可以下滑看到我们目前提供的岗位，如感兴趣可以直接点击此岗位标签。</div>
+      <div class="step-connector"><div class="step-connector-inner" id="conn2"></div></div>
+      <div class="step-indicator">
+        <div class="step-indicator-inner inactive" id="dot3"><span class="step-number">3</span></div>
       </div>
     </div>
-    <div class="stepper-item">
-      <div class="stepper-left">
-        <div class="stepper-dot inactive">3</div>
-      </div>
-      <div class="stepper-body">
-        <div class="stepper-title">欢迎加入南渝万能墙</div>
-        <div class="stepper-desc">你可以填写我们准备的意向表让我们联系你。</div>
+    <div class="step-content-area">
+      <div id="stepContent">
+        <div class="step-title" id="stepTitle">感谢选择南渝万能墙</div>
+        <div class="step-desc" id="stepDesc">我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！</div>
       </div>
     </div>
   </div>
@@ -589,22 +348,12 @@
 
   <div class="form-card">
     <div class="form-card-title">报名意向表</div>
-
     <div class="form-question">
-      <div class="form-q-label">
-        <span class="q-num">1</span>
-        姓名
-        <span class="q-required">*</span>
-      </div>
+      <div class="form-q-label"><span class="q-num">1</span> 姓名 <span class="q-required">*</span></div>
       <input type="text" class="glass-input" id="formName" placeholder="请输入你的姓名" />
     </div>
-
     <div class="form-question">
-      <div class="form-q-label">
-        <span class="q-num">2</span>
-        你的年级
-        <span class="q-required">*</span>
-      </div>
+      <div class="form-q-label"><span class="q-num">2</span> 你的年级 <span class="q-required">*</span></div>
       <div class="radio-group" id="gradeGroup">
         <div class="radio-option" data-value="初2029届"><div class="radio-dot"></div><span class="radio-label">初2029届</span></div>
         <div class="radio-option" data-value="初2028届"><div class="radio-dot"></div><span class="radio-label">初2028届</span></div>
@@ -615,24 +364,14 @@
         <div class="radio-option" data-value="已毕业"><div class="radio-dot"></div><span class="radio-label">已毕业</span></div>
       </div>
     </div>
-
     <div class="form-question">
-      <div class="form-q-label">
-        <span class="q-num">3</span>
-        选择意向岗位
-        <span class="q-required">*</span>
-      </div>
+      <div class="form-q-label"><span class="q-num">3</span> 选择意向岗位 <span class="q-required">*</span></div>
       <div class="radio-group" id="positionGroup">
         <div class="empty-card" style="min-height:60px; font-size:0.82rem;">岗位加载中…</div>
       </div>
     </div>
-
     <div class="form-question">
-      <div class="form-q-label">
-        <span class="q-num">4</span>
-        你的联系方式
-        <span class="q-required">*</span>
-      </div>
+      <div class="form-q-label"><span class="q-num">4</span> 你的联系方式 <span class="q-required">*</span></div>
       <div class="contact-row">
         <div class="contact-type-group" id="contactTypeGroup">
           <button class="contact-type-btn selected" data-type="QQ" type="button">QQ</button>
@@ -644,18 +383,11 @@
         </div>
       </div>
     </div>
-
     <div class="form-divider"></div>
-
     <div class="form-question">
-      <div class="form-q-label">
-        <span class="q-num">5</span>
-        你的技能
-        <span class="q-optional">（选填）</span>
-      </div>
+      <div class="form-q-label"><span class="q-num">5</span> 你的技能 <span class="q-optional">（选填）</span></div>
       <input type="text" class="glass-input" id="formSkills" placeholder="如：视频剪辑、文案写作、活动策划等" />
     </div>
-
     <div class="form-actions">
       <button class="submit-btn" id="submitBtn" type="button">提交报名</button>
     </div>
@@ -676,7 +408,12 @@
   var selectedPositionId = '';
   var selectedGrade = '';
   var selectedContactType = 'QQ';
-  var selectedPositionForRadio = '';
+
+  var STEPS = [
+    { title: '感谢选择南渝万能墙', desc: '我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！' },
+    { title: '选择你的意向岗位', desc: '你可以下滑看到我们目前提供的岗位，如感兴趣可以直接点击此岗位标签。' },
+    { title: '欢迎加入南渝万能墙', desc: '你可以填写我们准备的意向表让我们联系你。' }
+  ];
 
   function request(url, options) {
     return fetch(API_BASE + url, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options || {}))
@@ -685,10 +422,7 @@
 
   function setFormMsg(msg, color) {
     var el = document.getElementById('formMsg');
-    if (el) {
-      el.textContent = msg;
-      el.style.color = color || '';
-    }
+    if (el) { el.textContent = msg; el.style.color = color || ''; }
   }
 
   var toastTimer = null;
@@ -701,23 +435,36 @@
   }
 
   function updateStepper() {
-    var dots = document.querySelectorAll('.stepper-dot');
-    var lines = document.querySelectorAll('.stepper-line');
-    var step = 1;
-    if (selectedPositionId) step = 2;
-    if (document.getElementById('formName').value.trim() && selectedGrade && selectedPositionId && document.getElementById('formContact').value.trim()) step = 3;
+    var step = 0;
+    if (selectedPositionId) step = 1;
+    if (document.getElementById('formName').value.trim() && selectedGrade && selectedPositionId && document.getElementById('formContact').value.trim()) step = 2;
 
-    dots.forEach(function(d, i) {
-      d.classList.remove('active', 'done', 'inactive');
-      if (i + 1 < step) d.classList.add('done'), d.textContent = '✓';
-      else if (i + 1 === step) d.classList.add('active'), d.textContent = String(i + 1);
-      else d.classList.add('inactive'), d.textContent = String(i + 1);
+    var dots = ['dot1', 'dot2', 'dot3'];
+    var conns = ['conn1', 'conn2'];
+
+    dots.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      el.classList.remove('inactive', 'active', 'complete');
+      if (i < step) {
+        el.classList.add('complete');
+        el.innerHTML = '<svg class="check-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+      } else if (i === step) {
+        el.classList.add('active');
+        el.innerHTML = '<div class="active-dot"></div>';
+      } else {
+        el.classList.add('inactive');
+        el.innerHTML = '<span class="step-number">' + (i + 1) + '</span>';
+      }
     });
-    lines.forEach(function(l, i) {
-      l.classList.remove('done', 'inactive');
-      if (i + 1 < step) l.classList.add('done');
-      else l.classList.add('inactive');
+
+    conns.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      el.classList.toggle('complete', i < step);
     });
+
+    var data = STEPS[Math.min(step, 2)];
+    document.getElementById('stepTitle').textContent = data.title;
+    document.getElementById('stepDesc').textContent = data.desc;
   }
 
   function renderPositions() {
@@ -730,12 +477,9 @@
     }
     grid.innerHTML = positions.map(function(pos) {
       return '<div class="position-tag-card" data-id="' + pos.id + '">' +
-        '<div style="flex:1;min-width:0">' +
-          '<div class="pos-name">' + pos.title + '</div>' +
-          (pos.description ? '<div class="pos-desc">' + pos.description.substring(0, 60) + (pos.description.length > 60 ? '…' : '') + '</div>' : '') +
-        '</div>' +
-        '<div class="pos-check"></div>' +
-      '</div>';
+        '<div style="flex:1;min-width:0"><div class="pos-name">' + pos.title + '</div>' +
+        (pos.description ? '<div class="pos-desc">' + pos.description.substring(0, 60) + (pos.description.length > 60 ? '…' : '') + '</div>' : '') +
+        '</div><div class="pos-check"></div></div>';
     }).join('');
 
     posGroup.innerHTML = positions.map(function(pos) {
@@ -747,33 +491,21 @@
       card.addEventListener('click', function() {
         var id = this.getAttribute('data-id');
         var pos = positions.find(function(p) { return String(p.id) === String(id); });
-        if (pos) {
-          selectedPositionId = String(pos.id);
-          selectedPositionForRadio = pos.title;
-          grid.querySelectorAll('.position-tag-card').forEach(function(c) {
-            c.classList.toggle('selected', c.getAttribute('data-id') === id);
-          });
-          posGroup.querySelectorAll('.radio-option').forEach(function(r) {
-            r.classList.toggle('selected', r.getAttribute('data-value') === id);
-          });
-          showToast('已选择：' + pos.title);
-          updateStepper();
-        }
+        if (!pos) return;
+        selectedPositionId = String(pos.id);
+        grid.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.toggle('selected', c.getAttribute('data-id') === id); });
+        posGroup.querySelectorAll('.radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === id); });
+        showToast('已选择：' + pos.title);
+        updateStepper();
       });
     });
 
     posGroup.querySelectorAll('.radio-option').forEach(function(opt) {
       opt.addEventListener('click', function() {
         var val = this.getAttribute('data-value');
-        var title = this.getAttribute('data-title');
         selectedPositionId = val;
-        selectedPositionForRadio = title;
-        posGroup.querySelectorAll('.radio-option').forEach(function(r) {
-          r.classList.toggle('selected', r.getAttribute('data-value') === val);
-        });
-        grid.querySelectorAll('.position-tag-card').forEach(function(c) {
-          c.classList.toggle('selected', c.getAttribute('data-id') === val);
-        });
+        posGroup.querySelectorAll('.radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === val); });
+        grid.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.toggle('selected', c.getAttribute('data-id') === val); });
         updateStepper();
       });
     });
@@ -782,9 +514,7 @@
   document.querySelectorAll('#gradeGroup .radio-option').forEach(function(opt) {
     opt.addEventListener('click', function() {
       selectedGrade = this.getAttribute('data-value');
-      document.querySelectorAll('#gradeGroup .radio-option').forEach(function(r) {
-        r.classList.toggle('selected', r.getAttribute('data-value') === selectedGrade);
-      });
+      document.querySelectorAll('#gradeGroup .radio-option').forEach(function(r) { r.classList.toggle('selected', r.getAttribute('data-value') === selectedGrade); });
       updateStepper();
     });
   });
@@ -792,9 +522,7 @@
   document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       selectedContactType = this.getAttribute('data-type');
-      document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(b) {
-        b.classList.toggle('selected', b.getAttribute('data-type') === selectedContactType);
-      });
+      document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(b) { b.classList.toggle('selected', b.getAttribute('data-type') === selectedContactType); });
     });
   });
 
@@ -814,7 +542,6 @@
     if (!contact) { setFormMsg('请填写联系方式', '#ffb3b3'); return; }
 
     var pos = positions.find(function(p) { return String(p.id) === String(selectedPositionId); });
-
     btn.disabled = true;
     btn.textContent = '提交中…';
     setFormMsg('', '');
@@ -824,7 +551,7 @@
       body: JSON.stringify({
         name: name,
         position_id: pos ? pos.id : selectedPositionId,
-        position_title: pos ? pos.title : selectedPositionForRadio,
+        position_title: pos ? pos.title : '',
         qq: selectedContactType + '：' + contact,
         note: '年级：' + selectedGrade + (skills ? ' | 技能：' + skills : '')
       })
@@ -833,7 +560,6 @@
       document.getElementById('formContact').value = '';
       document.getElementById('formSkills').value = '';
       selectedPositionId = '';
-      selectedPositionForRadio = '';
       selectedGrade = '';
       document.querySelectorAll('.radio-option').forEach(function(r) { r.classList.remove('selected'); });
       document.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.remove('selected'); });
@@ -857,6 +583,5 @@
   });
 })();
 </script>
-
 </body>
 </html>
