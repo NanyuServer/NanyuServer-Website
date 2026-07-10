@@ -9,24 +9,16 @@
     :root {
       --bg-primary: #0F0A1A;
       --bg-secondary: #1A0E2E;
-      --bg-tertiary: #2d1b6b;
       --accent-light: #B388FF;
-      --accent-neon: #D500F9;
       --accent-gold: #e8c97a;
-      --accent-gold2: #f5dfa0;
       --accent-rose: #e86fa3;
-      --accent-teal: #5de8d0;
       --text-primary: #FFFFFF;
       --text-secondary: #E0D7FF;
       --text-muted: #9E8BBF;
-      --glass-bg: rgba(30, 10, 50, 0.45);
-      --glass-border: rgba(255, 255, 255, 0.15);
       --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
       --radius-sm: 8px;
       --radius-md: 16px;
       --radius-lg: 24px;
-      --radius-xl: 32px;
       --font-title: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
       --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
       --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -40,8 +32,8 @@
       color: var(--text-primary);
       line-height: 1.65;
       overflow-x: hidden;
+      min-height: 100vh;
     }
-
     body::before {
       content: '';
       position: fixed;
@@ -51,50 +43,17 @@
       opacity: 0.02;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(123, 85, 212, 0.35); border-radius: 100px; }
 
-    .navbar {
-      position: fixed;
-      top: 2em;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 800px;
-      z-index: 9000;
-      background: rgba(18, 10, 32, 0.65);
-      backdrop-filter: blur(24px) saturate(180%);
-      border: 0.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 60px;
-      padding: 0 1rem;
-    }
-    .navbar a { display: flex; align-items: center; }
-    .navbar .logo { height: 28px; filter: brightness(1.15); }
-
     .page-hero {
-      padding: 7rem 2rem 2.5rem;
+      padding: 5rem 1.5rem 2rem;
       background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
       position: relative;
       overflow: visible;
       text-align: center;
       isolation: isolate;
-    }
-    .page-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(75, 47, 163, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(75, 47, 163, 0.07) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
     }
     .page-hero::after {
       content: '';
@@ -110,9 +69,7 @@
         conic-gradient(from 0deg at 50% 0%, transparent 0deg, rgba(123, 85, 212, 0.06) 10deg, transparent 20deg),
         conic-gradient(from 30deg at 50% 0%, transparent 0deg, rgba(168, 127, 232, 0.04) 15deg, transparent 30deg),
         conic-gradient(from 60deg at 50% 0%, transparent 0deg, rgba(232, 111, 163, 0.03) 12deg, transparent 24deg),
-        conic-gradient(from -30deg at 50% 0%, transparent 0deg, rgba(93, 232, 208, 0.03) 8deg, transparent 16deg),
-        conic-gradient(from 90deg at 50% 0%, transparent 0deg, rgba(123, 85, 212, 0.05) 18deg, transparent 36deg),
-        conic-gradient(from -60deg at 50% 0%, transparent 0deg, rgba(232, 201, 122, 0.03) 10deg, transparent 20deg);
+        conic-gradient(from -30deg at 50% 0%, transparent 0deg, rgba(93, 232, 208, 0.03) 8deg, transparent 16deg);
       mask-image: radial-gradient(ellipse 60% 50% at 50% 20%, black 0%, transparent 100%);
       -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 20%, black 0%, transparent 100%);
     }
@@ -124,140 +81,188 @@
       top: -40px;
       left: 50%;
       transform: translateX(-50%);
-      width: 700px;
-      height: 550px;
+      width: 500px;
+      height: 400px;
       background: radial-gradient(circle, rgba(75, 47, 163, 0.5) 0%, rgba(232, 111, 163, 0.2) 50%, transparent 70%);
       z-index: 0;
     }
     .page-hero-content { position: relative; z-index: 2; }
-    .page-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-family: var(--font-ui);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--accent-gold);
-      margin-bottom: 1rem;
-    }
-    .page-label::before, .page-label::after {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 1px;
-      background: var(--accent-gold);
-    }
     .page-title {
       font-family: var(--font-title);
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(2rem, 6vw, 3rem);
       font-weight: 700;
       letter-spacing: 0.04em;
       background: linear-gradient(135deg, var(--accent-gold), var(--text-secondary), var(--accent-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
     }
     .page-sub {
       font-family: var(--font-body);
       color: var(--accent-light);
-      font-size: 0.95rem;
-      letter-spacing: 0.06em;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
     }
 
     .content-section {
-      max-width: 1100px;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 3rem 2rem 5rem;
+      padding: 1.5rem 1.25rem 4rem;
       position: relative;
       z-index: 1;
     }
 
-    .glass-card-base {
-      background: var(--card-bg, #120F17);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    .stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 2rem;
     }
-
-    .info-title {
-      font-family: var(--font-title);
-      font-size: 1.2rem;
+    .stepper-item {
+      display: flex;
+      gap: 1rem;
+      position: relative;
+    }
+    .stepper-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 32px;
+    }
+    .stepper-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
       font-weight: 700;
-      color: var(--accent-gold);
-      margin-bottom: 1rem;
+      flex-shrink: 0;
+      transition: all 0.3s;
     }
-    .info-text {
-      font-family: var(--font-body);
+    .stepper-dot.active {
+      background: linear-gradient(135deg, rgba(75, 47, 163, 0.8), rgba(168, 127, 232, 0.6));
+      color: white;
+      border: 2px solid var(--accent-light);
+      box-shadow: 0 0 12px rgba(179, 136, 255, 0.4);
+    }
+    .stepper-dot.done {
+      background: rgba(52, 211, 153, 0.2);
+      color: #34d399;
+      border: 2px solid rgba(52, 211, 153, 0.5);
+    }
+    .stepper-dot.inactive {
+      background: rgba(15, 10, 26, 0.6);
+      color: var(--text-muted);
+      border: 2px solid rgba(123, 85, 212, 0.2);
+    }
+    .stepper-line {
+      width: 2px;
+      flex: 1;
+      min-height: 20px;
+      margin: 4px 0;
+      transition: background 0.3s;
+    }
+    .stepper-line.done {
+      background: rgba(52, 211, 153, 0.4);
+    }
+    .stepper-line.inactive {
+      background: rgba(123, 85, 212, 0.15);
+    }
+    .stepper-body {
+      padding-bottom: 1.5rem;
+    }
+    .stepper-title {
+      font-family: var(--font-title);
       font-size: 0.95rem;
-      line-height: 1.8;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+      line-height: 32px;
+    }
+    .stepper-desc {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
       color: var(--text-secondary);
+      line-height: 1.7;
+      opacity: 0.85;
     }
 
     .section-heading {
       font-family: var(--font-title);
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: var(--accent-gold);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .positions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
       margin-bottom: 2rem;
     }
-    .position-card {
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: all 0.3s var(--ease-out);
-      border: 1px solid rgba(123, 85, 212, 0.25);
-      background: #120F17;
-      border-radius: var(--radius-lg);
-    }
-    .position-card.selected {
-      border-color: #a0f0c0;
-      box-shadow: 0 0 0 2px rgba(160, 240, 192, 0.18);
-    }
-    .position-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-    .position-title {
-      font-family: var(--font-title);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-      margin-bottom: 0.5rem;
-    }
-    .position-desc {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--accent-light);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-    .position-tag {
-      display: inline-block;
-      padding: 0.3rem 0.7rem;
-      background: rgba(123, 85, 212, 0.2);
-      border-radius: 4px;
-      font-size: 0.75rem;
-      color: white;
-      font-weight: 500;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .position-link {
+    .position-tag-card {
       display: inline-flex;
       align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      background: rgba(15, 10, 26, 0.6);
+      border: 1px solid rgba(123, 85, 212, 0.25);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      width: 100%;
+    }
+    .position-tag-card:hover {
+      border-color: var(--accent-light);
+      background: rgba(75, 47, 163, 0.15);
+    }
+    .position-tag-card.selected {
+      border-color: rgba(52, 211, 153, 0.6);
+      background: rgba(52, 211, 153, 0.08);
+      box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.2);
+    }
+    .position-tag-card .pos-name {
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .position-tag-card .pos-check {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(123, 85, 212, 0.3);
+      display: flex;
+      align-items: center;
       justify-content: center;
-      margin-top: 0.75rem;
-      text-decoration: none;
+      transition: all 0.25s;
+      flex-shrink: 0;
+    }
+    .position-tag-card.selected .pos-check {
+      border-color: #34d399;
+      background: #34d399;
+    }
+    .position-tag-card.selected .pos-check::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: white;
+    }
+    .position-tag-card .pos-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
     }
 
     .form-card {
-      padding: 2rem;
+      padding: 1.5rem;
       background: #120F17;
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-lg);
@@ -268,442 +273,586 @@
       font-size: 1.1rem;
       font-weight: 700;
       color: var(--accent-gold);
-      margin-bottom: 1.25rem;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-label {
-      color: var(--accent-light);
-      font-size: 0.9rem;
-    }
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.9rem;
-      margin-top: 1.2rem;
-    }
-    .form-note {
-      margin-top: 0.85rem;
-      font-size: 0.9rem;
-      color: #7b55d4;
-      transition: color 0.3s;
+      margin-bottom: 1.5rem;
     }
 
-    .glass-input, .glass-textarea {
+    .form-question {
+      margin-bottom: 1.5rem;
+    }
+    .form-question:last-of-type {
+      margin-bottom: 0;
+    }
+    .form-q-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+    }
+    .form-q-label .q-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(75, 47, 163, 0.4);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-light);
+      flex-shrink: 0;
+    }
+    .form-q-label .q-required {
+      color: var(--accent-rose);
+      font-size: 0.8rem;
+    }
+    .form-q-label .q-optional {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 400;
+    }
+
+    .glass-input {
       width: 100%;
       font-family: var(--font-ui);
       font-size: 0.88rem;
-      color: var(--text-primary);
+      color: var(--text-primary) !important;
       background: rgba(15, 10, 26, 0.6);
-      backdrop-filter: blur(12px) saturate(160%);
       border: 1px solid rgba(123, 85, 212, 0.3);
       border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 1rem;
       outline: none;
       transition: border-color 0.3s, box-shadow 0.3s;
+      -webkit-appearance: none;
     }
-    .glass-input:focus, .glass-textarea:focus {
+    .glass-input:focus {
       border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px rgba(179, 136, 255, 0.15), 0 0 20px rgba(179, 136, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(179, 136, 255, 0.15);
     }
-    .glass-input::placeholder, .glass-textarea::placeholder {
+    .glass-input::placeholder {
       color: var(--text-muted);
       opacity: 0.6;
     }
-    .glass-textarea { resize: vertical; min-height: 100px; line-height: 1.7; }
 
-    .glass-btn {
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 0.9rem;
+      background: rgba(15, 10, 26, 0.5);
+      border: 1px solid rgba(123, 85, 212, 0.2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+    }
+    .radio-option:hover {
+      border-color: rgba(123, 85, 212, 0.4);
+      background: rgba(75, 47, 163, 0.1);
+    }
+    .radio-option.selected {
+      border-color: var(--accent-light);
+      background: rgba(75, 47, 163, 0.2);
+    }
+    .radio-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(123, 85, 212, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s;
+    }
+    .radio-option.selected .radio-dot {
+      border-color: var(--accent-light);
+      background: var(--accent-light);
+    }
+    .radio-option.selected .radio-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: white;
+    }
+    .radio-label {
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: color 0.25s;
+    }
+    .radio-option.selected .radio-label {
+      color: var(--text-primary);
+    }
+
+    .contact-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .contact-type-group {
+      display: flex;
+      gap: 0;
+      flex-shrink: 0;
+      border: 1px solid rgba(123, 85, 212, 0.3);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .contact-type-btn {
+      padding: 0.7rem 0.8rem;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: rgba(15, 10, 26, 0.5);
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+      border-right: 1px solid rgba(123, 85, 212, 0.15);
+    }
+    .contact-type-btn:last-child {
+      border-right: none;
+    }
+    .contact-type-btn.selected {
+      background: rgba(75, 47, 163, 0.5);
+      color: white;
+    }
+    .contact-input {
+      flex: 1;
+      min-width: 0;
+    }
+    .contact-input .glass-input {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .form-divider {
+      height: 1px;
+      background: rgba(123, 85, 212, 0.12);
+      margin: 1.5rem 0;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    .submit-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       font-family: var(--font-ui);
-      font-size: 0.88rem;
-      font-weight: 500;
+      font-size: 0.95rem;
+      font-weight: 600;
       letter-spacing: 0.06em;
-      padding: 0.7rem 1.8rem;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 100px;
+      padding: 0.85rem 0;
+      width: 100%;
+      border: 1px solid rgba(179, 136, 255, 0.3);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(16px) saturate(180%);
-      transition: transform 0.3s var(--ease-out), box-shadow 0.3s, border-color 0.3s, background 0.3s;
-    }
-    .glass-btn:active { transform: scale(0.96); }
-    .glass-btn-primary {
-      background: rgba(75, 47, 163, 0.5);
+      background: linear-gradient(135deg, rgba(75, 47, 163, 0.6), rgba(100, 60, 180, 0.5));
       color: white;
-      box-shadow: 0 8px 28px rgba(75, 47, 163, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: all 0.3s var(--ease-out);
     }
-    .glass-btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 36px rgba(75, 47, 163, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-      background: rgba(75, 47, 163, 0.6);
+    .submit-btn:hover {
+      background: linear-gradient(135deg, rgba(75, 47, 163, 0.8), rgba(100, 60, 180, 0.7));
     }
-    .glass-btn-sm { padding: 0.45rem 1.2rem; font-size: 0.8rem; }
-
-    .gs-wrap { position: relative; width: 100%; }
-    .gs-trigger {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      color: var(--text-primary);
-      background: rgba(15, 10, 26, 0.6);
-      backdrop-filter: blur(12px) saturate(160%);
-      border: 1px solid rgba(123, 85, 212, 0.3);
-      padding: 0.7rem 1rem;
-      cursor: pointer;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      outline: none;
-      text-align: left;
-      appearance: none;
-      border-radius: var(--radius-sm, 8px);
+    .submit-btn:active {
+      transform: scale(0.98);
     }
-    .gs-trigger.placeholder { color: var(--text-muted); opacity: 0.6; }
-    .gs-trigger.open {
-      border-color: var(--accent-light);
-      box-shadow: 0 0 0 3px rgba(179, 136, 255, 0.15), 0 0 20px rgba(179, 136, 255, 0.08);
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
-    .gs-arrow {
-      width: 16px; height: 16px; flex-shrink: 0;
+    .form-note {
+      text-align: center;
+      margin-top: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      transition: transform 0.25s var(--ease-out);
     }
-    .gs-trigger.open .gs-arrow { transform: rotate(180deg); }
-    .gs-dropdown {
-      position: fixed;
-      z-index: 20000;
-      background: rgba(20, 12, 40, 0.97);
-      backdrop-filter: blur(24px) saturate(200%);
-      border: 1px solid rgba(179, 136, 255, 0.25);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(179, 136, 255, 0.08);
-      padding: 0.35rem;
-      max-height: 260px;
-      overflow-y: auto;
-      border-radius: var(--radius-md, 16px);
-      opacity: 0;
-      transform: translateY(-6px) scale(0.97);
-      transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
-      pointer-events: none;
-    }
-    .gs-dropdown.open {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-    .gs-option {
-      display: block;
-      width: 100%;
-      text-align: left;
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      background: transparent;
-      border: none;
-      padding: 0.6rem 0.8rem;
-      cursor: pointer;
-      transition: color 0.2s, background 0.2s;
-      border-radius: 12px;
-    }
-    .gs-option:hover { color: var(--text-primary); background: rgba(179, 136, 255, 0.12); }
-    .gs-option.active { color: var(--accent-gold); background: rgba(179, 136, 255, 0.18); }
-    .gs-dropdown::-webkit-scrollbar { width: 4px; }
-    .gs-dropdown::-webkit-scrollbar-track { background: transparent; }
-    .gs-dropdown::-webkit-scrollbar-thumb { background: rgba(123, 85, 212, 0.3); border-radius: 100px; }
 
     .empty-card {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 180px;
+      min-height: 80px;
       padding: 1.5rem;
-      color: var(--accent-light);
-      border: 1px dashed rgba(123, 85, 212, 0.4);
-      grid-column: 1 / -1;
-      background: #120F17;
+      color: var(--text-muted);
+      border: 1px dashed rgba(123, 85, 212, 0.3);
+      background: rgba(15, 10, 26, 0.4);
       border-radius: var(--radius-lg);
+      font-size: 0.88rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 1.25rem;
+      left: 1.25rem;
+      max-width: 360px;
+      margin: 0 auto;
+      padding: 0.8rem 1.2rem;
+      background: rgba(20, 12, 40, 0.97);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(179, 136, 255, 0.3);
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      z-index: 30000;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+      pointer-events: none;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
     }
 
     .app-footer {
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid rgba(75, 47, 163, 0.2);
-      background: linear-gradient(0deg, rgba(15, 10, 26, 0.9), transparent);
+      padding: 1.5rem;
+      text-align: center;
+      border-top: 1px solid rgba(75, 47, 163, 0.15);
     }
     .footer-copy {
       font-family: var(--font-body);
-      font-size: 0.73rem;
-      color: var(--accent-light);
-      letter-spacing: 0.06em;
-      opacity: 0.6;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.5;
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: none; }
-    }
-
-    @media (max-width: 768px) {
-      .page-hero { padding: 6rem 1.25rem 2.5rem; overflow: visible; }
-      .page-orb { width: 400px; height: 350px; }
-      .page-title { font-size: clamp(1.6rem, 7vw, 2.4rem); }
-      .content-section { padding: 2rem 1.25rem; }
-      .positions-grid { grid-template-columns: 1fr; }
-      .form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="index.html"><img src="logo.webp" alt="南渝万能墙" class="logo" /></a>
-</nav>
-
 <div class="page-hero">
   <div class="page-orb" />
   <div class="page-hero-content">
-    <div class="page-label">加入我们</div>
     <h1 class="page-title">招贤纳士</h1>
-    <p class="page-sub">诚邀优秀的学生加入运营团队，共同为校园服务</p>
+    <p class="page-sub">加入南渝万能墙运营团队</p>
   </div>
 </div>
 
 <div class="content-section">
-  <div class="glass-card-base" style="padding:2rem; margin-bottom:2rem;">
-    <div class="info-title">📋 关于本岗位</div>
-    <div class="info-text">南渝万能墙是一个致力于为学生服务的校园平台，我们诚邀热心、有想法、有执行力的同学加入我们的运营团队。通过参与平台的日常运营，你将获得宝贵的团队协作、项目管理和沟通能力。</div>
-  </div>
 
-  <h2 class="section-heading">🎯 招聘岗位</h2>
-  <div class="positions-grid" id="positionsGrid">
-    <div class="empty-card">招聘岗位加载中，请稍候。</div>
-  </div>
-
-  <div class="form-card" style="margin-top:2rem;">
-    <div class="form-card-title">📝 岗位报名</div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label class="form-label">姓名</label>
-        <input type="text" class="glass-input" id="formName" placeholder="请输入姓名" />
+  <div class="stepper">
+    <div class="stepper-item">
+      <div class="stepper-left">
+        <div class="stepper-dot active">1</div>
+        <div class="stepper-line inactive"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">意向岗位</label>
-        <div class="gs-wrap" id="positionSelect">
-          <button class="gs-trigger placeholder" type="button" id="positionTrigger">
-            <span>请选择意向岗位</span>
-            <svg class="gs-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
-          </button>
-          <div class="gs-dropdown" id="positionDropdown"></div>
+      <div class="stepper-body">
+        <div class="stepper-title">感谢选择南渝万能墙</div>
+        <div class="stepper-desc">我们提供了旗下各平台的运营岗位。在这里，你可以磨练自己的能力、结识新好友，创造无限可能！</div>
+      </div>
+    </div>
+    <div class="stepper-item">
+      <div class="stepper-left">
+        <div class="stepper-dot inactive">2</div>
+        <div class="stepper-line inactive"></div>
+      </div>
+      <div class="stepper-body">
+        <div class="stepper-title">选择你的意向岗位</div>
+        <div class="stepper-desc">你可以下滑看到我们目前提供的岗位，如感兴趣可以直接点击此岗位标签。</div>
+      </div>
+    </div>
+    <div class="stepper-item">
+      <div class="stepper-left">
+        <div class="stepper-dot inactive">3</div>
+      </div>
+      <div class="stepper-body">
+        <div class="stepper-title">欢迎加入南渝万能墙</div>
+        <div class="stepper-desc">你可以填写我们准备的意向表让我们联系你。</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-heading">岗位列表</h2>
+  <div class="positions-grid" id="positionsGrid">
+    <div class="empty-card">岗位加载中…</div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-card-title">报名意向表</div>
+
+    <div class="form-question">
+      <div class="form-q-label">
+        <span class="q-num">1</span>
+        姓名
+        <span class="q-required">*</span>
+      </div>
+      <input type="text" class="glass-input" id="formName" placeholder="请输入你的姓名" />
+    </div>
+
+    <div class="form-question">
+      <div class="form-q-label">
+        <span class="q-num">2</span>
+        你的年级
+        <span class="q-required">*</span>
+      </div>
+      <div class="radio-group" id="gradeGroup">
+        <div class="radio-option" data-value="初2029届"><div class="radio-dot"></div><span class="radio-label">初2029届</span></div>
+        <div class="radio-option" data-value="初2028届"><div class="radio-dot"></div><span class="radio-label">初2028届</span></div>
+        <div class="radio-option" data-value="初2027届"><div class="radio-dot"></div><span class="radio-label">初2027届</span></div>
+        <div class="radio-option" data-value="高2029届"><div class="radio-dot"></div><span class="radio-label">高2029届</span></div>
+        <div class="radio-option" data-value="高2028届"><div class="radio-dot"></div><span class="radio-label">高2028届</span></div>
+        <div class="radio-option" data-value="高2027届"><div class="radio-dot"></div><span class="radio-label">高2027届</span></div>
+        <div class="radio-option" data-value="已毕业"><div class="radio-dot"></div><span class="radio-label">已毕业</span></div>
+      </div>
+    </div>
+
+    <div class="form-question">
+      <div class="form-q-label">
+        <span class="q-num">3</span>
+        选择意向岗位
+        <span class="q-required">*</span>
+      </div>
+      <div class="radio-group" id="positionGroup">
+        <div class="empty-card" style="min-height:60px; font-size:0.82rem;">岗位加载中…</div>
+      </div>
+    </div>
+
+    <div class="form-question">
+      <div class="form-q-label">
+        <span class="q-num">4</span>
+        你的联系方式
+        <span class="q-required">*</span>
+      </div>
+      <div class="contact-row">
+        <div class="contact-type-group" id="contactTypeGroup">
+          <button class="contact-type-btn selected" data-type="QQ" type="button">QQ</button>
+          <button class="contact-type-btn" data-type="微信" type="button">微信</button>
+          <button class="contact-type-btn" data-type="抖音" type="button">抖音</button>
+        </div>
+        <div class="contact-input">
+          <input type="text" class="glass-input" id="formContact" placeholder="请输入联系方式" />
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">联系方式（QQ）</label>
-        <input type="text" class="glass-input" id="formQQ" placeholder="请输入QQ号" />
-      </div>
-      <div class="form-group full">
-        <label class="form-label">备注（选填）</label>
-        <textarea class="glass-textarea" id="formNote" placeholder="如有特殊时间、技能或期望可以填写" rows="4"></textarea>
-      </div>
     </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-question">
+      <div class="form-q-label">
+        <span class="q-num">5</span>
+        你的技能
+        <span class="q-optional">（选填）</span>
+      </div>
+      <input type="text" class="glass-input" id="formSkills" placeholder="如：视频剪辑、文案写作、活动策划等" />
+    </div>
+
     <div class="form-actions">
-      <button class="glass-btn glass-btn-primary" id="submitBtn" type="button">提交报名</button>
+      <button class="submit-btn" id="submitBtn" type="button">提交报名</button>
     </div>
-    <div class="form-note" id="formNote2">我们会尽快联系你，请保证联系方式正确。</div>
+    <div class="form-note" id="formMsg"></div>
   </div>
+
+  <footer class="app-footer">
+    <div class="footer-copy">&copy; 2026 南渝万能墙运营队</div>
+  </footer>
 </div>
 
-<footer class="app-footer">
-  <div class="footer-copy">&copy; 2026 南渝万能墙运营队 · 保留所有权利</div>
-</footer>
+<div class="toast" id="toast"></div>
 
 <script>
 (function() {
-  const API_BASE = '/api';
-  let positions = [];
-  let selectedPositionId = '';
+  var API_BASE = '/api';
+  var positions = [];
+  var selectedPositionId = '';
+  var selectedGrade = '';
+  var selectedContactType = 'QQ';
+  var selectedPositionForRadio = '';
 
-  async function request(url, options) {
-    const res = await fetch(API_BASE + url, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options || {}));
-    const json = await res.json().catch(function() { return {}; });
-    if (!res.ok) throw new Error(json.error || 'HTTP ' + res.status);
-    return json;
+  function request(url, options) {
+    return fetch(API_BASE + url, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options || {}))
+      .then(function(res) { return res.json().catch(function() { return {}; }).then(function(json) { if (!res.ok) throw new Error(json.error || 'HTTP ' + res.status); return json; }); });
   }
 
-  function setFormNote(msg, color) {
-    var el = document.getElementById('formNote2');
-    el.textContent = msg;
-    el.style.color = color || '#7b55d4';
+  function setFormMsg(msg, color) {
+    var el = document.getElementById('formMsg');
+    if (el) {
+      el.textContent = msg;
+      el.style.color = color || '';
+    }
+  }
+
+  var toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  function updateStepper() {
+    var dots = document.querySelectorAll('.stepper-dot');
+    var lines = document.querySelectorAll('.stepper-line');
+    var step = 1;
+    if (selectedPositionId) step = 2;
+    if (document.getElementById('formName').value.trim() && selectedGrade && selectedPositionId && document.getElementById('formContact').value.trim()) step = 3;
+
+    dots.forEach(function(d, i) {
+      d.classList.remove('active', 'done', 'inactive');
+      if (i + 1 < step) d.classList.add('done'), d.textContent = '✓';
+      else if (i + 1 === step) d.classList.add('active'), d.textContent = String(i + 1);
+      else d.classList.add('inactive'), d.textContent = String(i + 1);
+    });
+    lines.forEach(function(l, i) {
+      l.classList.remove('done', 'inactive');
+      if (i + 1 < step) l.classList.add('done');
+      else l.classList.add('inactive');
+    });
   }
 
   function renderPositions() {
     var grid = document.getElementById('positionsGrid');
+    var posGroup = document.getElementById('positionGroup');
     if (!positions.length) {
       grid.innerHTML = '<div class="empty-card">暂无招聘岗位</div>';
+      posGroup.innerHTML = '<div class="empty-card" style="min-height:60px; font-size:0.82rem;">暂无招聘岗位</div>';
       return;
     }
     grid.innerHTML = positions.map(function(pos) {
-      var tags = pos.tags ? pos.tags.split(',').map(function(t) {
-        return '<span class="position-tag">' + t.trim() + '</span>';
-      }).join('') : '';
-      var linkHtml = pos.apply_url
-        ? '<a href="' + pos.apply_url + '" target="_blank" class="position-link glass-btn glass-btn-primary glass-btn-sm" onclick="event.stopPropagation()">立即报名</a>'
-        : '';
-      return '<div class="position-card" data-id="' + pos.id + '">' +
-        '<div class="position-title">' + pos.title + '</div>' +
-        '<div class="position-desc">' + (pos.description || '') + '</div>' +
-        tags + linkHtml +
-        '</div>';
+      return '<div class="position-tag-card" data-id="' + pos.id + '">' +
+        '<div style="flex:1;min-width:0">' +
+          '<div class="pos-name">' + pos.title + '</div>' +
+          (pos.description ? '<div class="pos-desc">' + pos.description.substring(0, 60) + (pos.description.length > 60 ? '…' : '') + '</div>' : '') +
+        '</div>' +
+        '<div class="pos-check"></div>' +
+      '</div>';
     }).join('');
 
-    grid.querySelectorAll('.position-card').forEach(function(card) {
+    posGroup.innerHTML = positions.map(function(pos) {
+      return '<div class="radio-option" data-value="' + pos.id + '" data-title="' + pos.title + '">' +
+        '<div class="radio-dot"></div><span class="radio-label">' + pos.title + '</span></div>';
+    }).join('');
+
+    grid.querySelectorAll('.position-tag-card').forEach(function(card) {
       card.addEventListener('click', function() {
         var id = this.getAttribute('data-id');
-        selectPosition(id);
-      });
-    });
-  }
-
-  function selectPosition(id) {
-    selectedPositionId = id;
-    document.querySelectorAll('.position-card').forEach(function(c) {
-      c.classList.toggle('selected', c.getAttribute('data-id') === id);
-    });
-    var pos = positions.find(function(p) { return String(p.id) === String(id); });
-    if (pos) {
-      setFormNote('已选择岗位：' + pos.title + '，请完成报名信息后提交。', '#a0f0c0');
-    }
-    var trigger = document.getElementById('positionTrigger');
-    var label = trigger.querySelector('span');
-    label.textContent = pos ? pos.title : '请选择意向岗位';
-    label.classList.remove('placeholder');
-  }
-
-  var dropdownOpen = false;
-  var triggerEl = document.getElementById('positionTrigger');
-  var dropdownEl = document.getElementById('positionDropdown');
-
-  function renderDropdownOptions() {
-    var html = '<button class="gs-option' + (!selectedPositionId ? ' active' : '') + '" data-value="">请选择意向岗位</button>';
-    positions.forEach(function(p) {
-      html += '<button class="gs-option' + (String(p.id) === selectedPositionId ? ' active' : '') + '" data-value="' + p.id + '">' + p.title + '</button>';
-    });
-    dropdownEl.innerHTML = html;
-    dropdownEl.querySelectorAll('.gs-option').forEach(function(opt) {
-      opt.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var val = this.getAttribute('data-value');
-        if (val) selectPosition(val);
-        else {
-          selectedPositionId = '';
-          triggerEl.querySelector('span').textContent = '请选择意向岗位';
-          triggerEl.querySelector('span').classList.add('placeholder');
-          setFormNote('我们会尽快联系你，请保证联系方式正确。', '#7b55d4');
+        var pos = positions.find(function(p) { return String(p.id) === String(id); });
+        if (pos) {
+          selectedPositionId = String(pos.id);
+          selectedPositionForRadio = pos.title;
+          grid.querySelectorAll('.position-tag-card').forEach(function(c) {
+            c.classList.toggle('selected', c.getAttribute('data-id') === id);
+          });
+          posGroup.querySelectorAll('.radio-option').forEach(function(r) {
+            r.classList.toggle('selected', r.getAttribute('data-value') === id);
+          });
+          showToast('已选择：' + pos.title);
+          updateStepper();
         }
-        closeDropdown();
+      });
+    });
+
+    posGroup.querySelectorAll('.radio-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        var val = this.getAttribute('data-value');
+        var title = this.getAttribute('data-title');
+        selectedPositionId = val;
+        selectedPositionForRadio = title;
+        posGroup.querySelectorAll('.radio-option').forEach(function(r) {
+          r.classList.toggle('selected', r.getAttribute('data-value') === val);
+        });
+        grid.querySelectorAll('.position-tag-card').forEach(function(c) {
+          c.classList.toggle('selected', c.getAttribute('data-id') === val);
+        });
+        updateStepper();
       });
     });
   }
 
-  function openDropdown() {
-    var rect = triggerEl.getBoundingClientRect();
-    var spaceBelow = window.innerHeight - rect.bottom;
-    var dropHeight = Math.min((positions.length + 1) * 38 + 12, 260);
-    dropdownEl.style.left = rect.left + 'px';
-    dropdownEl.style.width = rect.width + 'px';
-    if (spaceBelow < dropHeight + 8 && rect.top > dropHeight) {
-      dropdownEl.style.top = 'auto';
-      dropdownEl.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
-    } else {
-      dropdownEl.style.top = (rect.bottom + 6) + 'px';
-      dropdownEl.style.bottom = 'auto';
-    }
-    renderDropdownOptions();
-    dropdownEl.classList.add('open');
-    triggerEl.classList.add('open');
-    dropdownOpen = true;
-  }
-
-  function closeDropdown() {
-    dropdownEl.classList.remove('open');
-    triggerEl.classList.remove('open');
-    dropdownOpen = false;
-  }
-
-  triggerEl.addEventListener('click', function(e) {
-    e.stopPropagation();
-    if (dropdownOpen) closeDropdown();
-    else openDropdown();
+  document.querySelectorAll('#gradeGroup .radio-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      selectedGrade = this.getAttribute('data-value');
+      document.querySelectorAll('#gradeGroup .radio-option').forEach(function(r) {
+        r.classList.toggle('selected', r.getAttribute('data-value') === selectedGrade);
+      });
+      updateStepper();
+    });
   });
 
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#positionSelect')) closeDropdown();
+  document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      selectedContactType = this.getAttribute('data-type');
+      document.querySelectorAll('#contactTypeGroup .contact-type-btn').forEach(function(b) {
+        b.classList.toggle('selected', b.getAttribute('data-type') === selectedContactType);
+      });
+    });
   });
 
-  document.getElementById('submitBtn').addEventListener('click', async function() {
+  ['formName', 'formContact', 'formSkills'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', updateStepper);
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', function() {
     var name = document.getElementById('formName').value.trim();
-    var qq = document.getElementById('formQQ').value.trim();
-    var note = document.getElementById('formNote').value.trim();
+    var contact = document.getElementById('formContact').value.trim();
+    var skills = document.getElementById('formSkills').value.trim();
     var btn = document.getElementById('submitBtn');
 
-    if (!name) { setFormNote('请输入姓名', '#ffb3b3'); return; }
-    if (!selectedPositionId) { setFormNote('请选择意向岗位', '#ffb3b3'); return; }
-    if (!qq) { setFormNote('请输入QQ联系方式', '#ffb3b3'); return; }
+    if (!name) { setFormMsg('请填写姓名', '#ffb3b3'); return; }
+    if (!selectedGrade) { setFormMsg('请选择年级', '#ffb3b3'); return; }
+    if (!selectedPositionId) { setFormMsg('请选择意向岗位', '#ffb3b3'); return; }
+    if (!contact) { setFormMsg('请填写联系方式', '#ffb3b3'); return; }
 
     var pos = positions.find(function(p) { return String(p.id) === String(selectedPositionId); });
-    if (!pos) { setFormNote('请选择有效的意向岗位', '#ffb3b3'); return; }
 
     btn.disabled = true;
     btn.textContent = '提交中…';
-    setFormNote('正在提交，请稍候…', '');
+    setFormMsg('', '');
 
-    try {
-      await request('/recruit-applicants', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: name,
-          position_id: pos.id,
-          position_title: pos.title,
-          qq: qq,
-          note: note
-        })
-      });
+    request('/recruit-applicants', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: name,
+        position_id: pos ? pos.id : selectedPositionId,
+        position_title: pos ? pos.title : selectedPositionForRadio,
+        qq: selectedContactType + '：' + contact,
+        note: '年级：' + selectedGrade + (skills ? ' | 技能：' + skills : '')
+      })
+    }).then(function() {
       document.getElementById('formName').value = '';
-      document.getElementById('formQQ').value = '';
-      document.getElementById('formNote').value = '';
+      document.getElementById('formContact').value = '';
+      document.getElementById('formSkills').value = '';
       selectedPositionId = '';
-      triggerEl.querySelector('span').textContent = '请选择意向岗位';
-      triggerEl.querySelector('span').classList.add('placeholder');
-      document.querySelectorAll('.position-card').forEach(function(c) { c.classList.remove('selected'); });
-      setFormNote('报名提交成功，我们会尽快与你联系', '#a0f0c0');
-    } catch (e) {
-      setFormNote('提交失败：' + (e.message || '请稍后重试'), '#ffb3b3');
-    } finally {
+      selectedPositionForRadio = '';
+      selectedGrade = '';
+      document.querySelectorAll('.radio-option').forEach(function(r) { r.classList.remove('selected'); });
+      document.querySelectorAll('.position-tag-card').forEach(function(c) { c.classList.remove('selected'); });
+      showToast('报名提交成功，我们会尽快与你联系');
+      setFormMsg('提交成功', '#a0f0c0');
+      updateStepper();
+    }).catch(function(e) {
+      setFormMsg('提交失败：' + (e.message || '请稍后重试'), '#ffb3b3');
+    }).finally(function() {
       btn.disabled = false;
       btn.textContent = '提交报名';
-    }
+    });
   });
 
   request('/recruitments').then(function(json) {
     positions = Array.isArray(json.data) ? json.data : [];
     renderPositions();
-  }).catch(function(e) {
-    console.warn('加载招聘岗位失败:', e);
+    updateStepper();
+  }).catch(function() {
     document.getElementById('positionsGrid').innerHTML = '<div class="empty-card">加载失败，请刷新重试</div>';
   });
 })();
